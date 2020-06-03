@@ -1,4 +1,4 @@
-package com.example.android.popularmoviesapp;
+package com.example.android.popularmoviesapp.fragments;
 
 
 import android.content.Intent;
@@ -7,6 +7,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.android.popularmoviesapp.DetailsActivity;
+import com.example.android.popularmoviesapp.MovieAdapter;
+import com.example.android.popularmoviesapp.MoviesQueryTask;
+import com.example.android.popularmoviesapp.R;
 import com.example.android.popularmoviesapp.model.Movie;
 
 import java.util.ArrayList;
@@ -23,7 +27,7 @@ public class TopRatedMoviesFragment extends Fragment implements
         MovieAdapter.OnListItemClickListener,
         MoviesQueryTask.OnTaskCompleted {
 
-    @BindView(R.id.rv_top_rated_movies)
+    @BindView(R.id.rv_movies)
     RecyclerView mRecyclerView;
 
     private MovieAdapter mMovieAdapter;

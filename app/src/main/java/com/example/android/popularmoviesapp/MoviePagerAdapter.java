@@ -1,6 +1,8 @@
 package com.example.android.popularmoviesapp;
 
-import android.content.Context;
+import com.example.android.popularmoviesapp.fragments.FavouriteMoviesFragment;
+import com.example.android.popularmoviesapp.fragments.PopularMoviesFragment;
+import com.example.android.popularmoviesapp.fragments.TopRatedMoviesFragment;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -10,7 +12,7 @@ import androidx.fragment.app.FragmentPagerAdapter;
 
 public class MoviePagerAdapter extends FragmentPagerAdapter {
 
-    private static int NUM_ITEMS = 2;
+    private static final int NUM_ITEMS = 3;
 
     public MoviePagerAdapter(@NonNull FragmentManager fm) {
         super(fm);
@@ -21,8 +23,10 @@ public class MoviePagerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         if (position == 0) {
             return new PopularMoviesFragment();
-        } else {
+        } else if (position == 1) {
             return new TopRatedMoviesFragment();
+        } else {
+            return new FavouriteMoviesFragment();
         }
     }
 
@@ -36,8 +40,10 @@ public class MoviePagerAdapter extends FragmentPagerAdapter {
     public CharSequence getPageTitle(int position) {
         if (position == 0) {
             return "Popular";
-        } else {
+        } else if (position == 1) {
             return "Top Rated";
+        } else {
+            return "Favourite";
         }
     }
 }
