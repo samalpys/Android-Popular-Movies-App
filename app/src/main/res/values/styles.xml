@@ -8,14 +8,13 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-<!--     TODO: delete these two later-->
-    <style name="TextStyleTitle" parent="@android:style/TextAppearance">
-        <item name="android:textStyle">bold</item>
-        <item name="android:fontFamily">sans-serif-light</item>
+    <style name="CategoryTab" parent="Widget.Design.TabLayout">
+        <item name="tabIndicatorColor">@color/colorAccent</item>
+        <item name="tabSelectedTextColor">@android:color/background_light</item>
+        <item name="tabTextAppearance">@style/CategoryTabTextAppearance</item>
     </style>
-
-    <style name="TextStyleItems" parent="@android:style/TextAppearance">
-        <item name="android:fontFamily">sans-serif-light</item>
+    <style name="CategoryTabTextAppearance" parent="TextAppearance.Design.Tab">
+        <item name="android:textColor">@android:color/darker_gray</item>
     </style>
 
 </resources>

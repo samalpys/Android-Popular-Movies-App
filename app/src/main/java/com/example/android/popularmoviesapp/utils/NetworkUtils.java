@@ -7,7 +7,6 @@ import com.example.android.popularmoviesapp.model.Movie;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONStringer;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -18,7 +17,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
-import javax.net.ssl.HttpsURLConnection;
 
 public class NetworkUtils {
 
@@ -29,7 +27,6 @@ public class NetworkUtils {
     private static final String PARAM_PAGE = "page";
 
     private static final String API_KEY = "9321c4fc5f95b92bce700096da663cde";
-    private static final String SORT = "popularity.desc";
     private static final String PAGE = "1";
 
     private static final String TAG_RESULTS = "results";
@@ -40,11 +37,10 @@ public class NetworkUtils {
     private static final String TAG_RELEASE_DATE = "release_date";
 
 
-    public static URL buildUrl() {
+    public static URL buildUrl(String sortParam) {
         Uri builtUri = Uri.parse(BASE_URL).buildUpon()
                 .appendQueryParameter(PARAM_API_KEY, API_KEY)
-                .appendQueryParameter(PARAM_SORT, SORT)
-//                .appendQueryParameter(PARAM_REGION, REGION)
+                .appendQueryParameter(PARAM_SORT, sortParam)
                 .appendQueryParameter(PARAM_PAGE, PAGE)
                 .build();
 
