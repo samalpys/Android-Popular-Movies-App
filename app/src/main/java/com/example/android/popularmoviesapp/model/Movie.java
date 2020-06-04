@@ -5,80 +5,77 @@ import android.os.Parcelable;
 
 public class Movie implements Parcelable {
 
+    private long id;
     private String originalTitle;
     private String overview;
     private String posterPath;
+    private String backdropPath;
     private String releaseDate;
     private double voteAverage;
 
-    private final String IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w185";
+    private static final String IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w185";
 
     public Movie() { }
 
-    public Movie(String originalTitle, String overview, String posterPath, String releaseDate, double voteAverage) {
+    public Movie(long id, String originalTitle, String overview, String posterPath,
+                 String backdropPath, String releaseDate, double voteAverage) {
+        this.id = id;
         this.originalTitle = originalTitle;
         this.overview = overview;
         this.posterPath = posterPath;
+        this.backdropPath = backdropPath;
         this.releaseDate = releaseDate;
         this.voteAverage = voteAverage;
     }
 
-    public String getOriginalTitle() {
-        return originalTitle;
-    }
+    public long getId() { return id; }
 
-    public String getOverview() {
-        return overview;
-    }
+    public String getOriginalTitle() { return originalTitle; }
 
-    public String getPosterPath() {
-        return IMAGE_BASE_URL + posterPath;
-    }
+    public String getOverview() { return overview; }
 
-    public String getReleaseDate() {
-        return releaseDate;
-    }
+    public String getPosterPath() { return IMAGE_BASE_URL + posterPath; }
 
-    public double getVoteAverage() {
-        return voteAverage;
-    }
+    public String getBackdropPath() { return IMAGE_BASE_URL + backdropPath; }
 
-    public void setOriginalTitle(String originalTitle) {
-        this.originalTitle = originalTitle;
-    }
+    public String getReleaseDate() { return releaseDate; }
 
-    public void setOverview(String overview) {
-        this.overview = overview;
-    }
+    public double getVoteAverage() { return voteAverage; }
 
-    public void setPosterPath(String posterPath) {
-        this.posterPath = posterPath;
-    }
+    public void setId(long id) { this.id = id; }
 
-    public void setReleaseDate(String releaseDate) {
-        this.releaseDate = releaseDate;
-    }
+    public void setOriginalTitle(String originalTitle) { this.originalTitle = originalTitle; }
 
-    public void setVoteAverage(double voteAverage) {
-        this.voteAverage = voteAverage;
-    }
+    public void setOverview(String overview) { this.overview = overview; }
+
+    public void setPosterPath(String posterPath) { this.posterPath = posterPath; }
+
+    public void setBackdropPath(String backdropPath) { this.backdropPath = backdropPath; }
+
+    public void setReleaseDate(String releaseDate) { this.releaseDate = releaseDate; }
+
+    public void setVoteAverage(double voteAverage) { this.voteAverage = voteAverage; }
 
 
     /* --- Methods for Parcelable ---  */
 
     protected Movie(Parcel in) {
+        id = in.readLong();
         originalTitle = in.readString();
         overview = in.readString();
         posterPath = in.readString();
+        backdropPath = in.readString();
         releaseDate = in.readString();
         voteAverage = in.readDouble();
     }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(id);
         dest.writeString(originalTitle);
         dest.writeString(overview);
         dest.writeString(posterPath);
+        dest.writeString(backdropPath);
         dest.writeString(releaseDate);
         dest.writeDouble(voteAverage);
     }

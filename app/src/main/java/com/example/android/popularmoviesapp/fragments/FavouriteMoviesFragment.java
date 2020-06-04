@@ -1,6 +1,7 @@
 package com.example.android.popularmoviesapp.fragments;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +10,7 @@ import android.view.ViewGroup;
 import com.example.android.popularmoviesapp.DetailsActivity;
 import com.example.android.popularmoviesapp.MovieAdapter;
 import com.example.android.popularmoviesapp.R;
+import com.example.android.popularmoviesapp.data.MovieContract.MovieEntry;
 import com.example.android.popularmoviesapp.model.Movie;
 
 import androidx.annotation.NonNull;
@@ -42,9 +44,26 @@ public class FavouriteMoviesFragment extends Fragment implements MovieAdapter.On
         mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), NUMBER_OF_COLUMNS));
         mRecyclerView.setHasFixedSize(true);
 
-        mMovieAdapter = new MovieAdapter(null, this);
+        Cursor cursor = queryFavouriteMovies();
+        mMovieAdapter = new MovieAdapter(cursor, true, this);
         mRecyclerView.setAdapter(mMovieAdapter);
+        mMovieAdapter.swapCursor(queryFavouriteMovies());
+        mMovieAdapter.notifyDataSetChanged();
+    }
 
+    private Cursor queryFavouriteMovies() {
+        String[] projection = {
+                MovieEntry.COLUMN_POSTER_PATH
+        };
+
+        getContext().getContentResolver().query(
+                MovieEntry.CONTENT_URI,
+                projection,
+                null,
+                null,
+                null
+        );
+        return null;
     }
 
     // for MovieAdapter.OnListItemClickListener callback interface

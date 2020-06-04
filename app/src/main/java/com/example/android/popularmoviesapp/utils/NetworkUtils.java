@@ -30,8 +30,10 @@ public class NetworkUtils {
     private static final String PAGE = "1";
 
     private static final String TAG_RESULTS = "results";
+    private static final String TAG_ID = "id";
     private static final String TAG_ORIGINAL_TITLE = "original_title";
     private static final String TAG_POSTER_PATH = "poster_path";
+    private static final String TAG_BACKDROP_PATH = "backdrop_path";
     private static final String TAG_OVERVIEW = "overview";
     private static final String TAG_VOTE_AVERAGE = "vote_average";
     private static final String TAG_RELEASE_DATE = "release_date";
@@ -106,13 +108,15 @@ public class NetworkUtils {
         for (int i=0; i<resultsArray.length(); i++) {
             JSONObject movieInfoObject = resultsArray.getJSONObject(i);
 
+            long id = movieInfoObject.getLong(TAG_ID);
             String originalTitle = movieInfoObject.getString(TAG_ORIGINAL_TITLE);
             String overview = movieInfoObject.getString(TAG_OVERVIEW);
             String posterPath = movieInfoObject.getString(TAG_POSTER_PATH);
+            String backdropPath = movieInfoObject.getString(TAG_BACKDROP_PATH);
             String releaseDate = movieInfoObject.getString(TAG_RELEASE_DATE);
             double voteAverage = movieInfoObject.getDouble(TAG_VOTE_AVERAGE);
 
-            movies.add(new Movie(originalTitle, overview, posterPath, releaseDate, voteAverage));
+            movies.add(new Movie(id, originalTitle, overview, posterPath, backdropPath, releaseDate, voteAverage));
         }
 
         return movies;
