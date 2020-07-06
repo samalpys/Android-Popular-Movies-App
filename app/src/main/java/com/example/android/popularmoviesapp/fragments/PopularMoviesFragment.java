@@ -62,6 +62,11 @@ public class PopularMoviesFragment extends Fragment implements
         startActivity(intent);
     }
 
+    @Override
+    public void onClick(long id) {
+        // don't need this for now
+    }
+
     // for MoviesQueryTask.OnTaskCompleted callback interface
     @Override
     public void onFetchData(ArrayList<Movie> movies) {

@@ -25,6 +25,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MoiveViewHol
 
     public interface OnListItemClickListener {
         void onClick(Movie movie);
+        void onClick(long id);
     }
 
 
@@ -51,20 +52,20 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MoiveViewHol
 
     @Override
     public void onBindViewHolder(@NonNull MoiveViewHolder holder, int position) {
-        long id = -1;
+//        long id = -1;
         String posterPath = "";
 
         if (!isCursorData) {
             Movie movie = movies.get(position);
             posterPath = movie.getPosterPath();
-            id = movie.getId();
+//            id = movie.getId();
         } else {
             if (mCursor.moveToPosition(position)) {
                 posterPath = mCursor.getString(mCursor.getColumnIndex(MovieEntry.COLUMN_POSTER_PATH));
-                id = mCursor.getLong(mCursor.getColumnIndex(MovieEntry.COLUMN_ID));
+//                id = mCursor.getLong(mCursor.getColumnIndex(MovieEntry.COLUMN_ID));
             }
         }
-        if (id != -1) holder.mItem.setId((int) id);
+//        if (id != -1) holder.mItem.setId((int) id);
         Picasso.get()
                 .load(posterPath)
                 .resize(486,612)
@@ -108,7 +109,13 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MoiveViewHol
         @Override
         public void onClick(View v) {
             int position = getAdapterPosition();
-            mListener.onClick(movies.get(position));
+            if (!isCursorData) {
+                mListener.onClick(movies.get(position));
+            } else {
+                mCursor.moveToPosition(position);
+                long id = mCursor.getLong(mCursor.getColumnIndex(MovieEntry.COLUMN_ID));
+                mListener.onClick(id);
+            }
         }
     }
 }

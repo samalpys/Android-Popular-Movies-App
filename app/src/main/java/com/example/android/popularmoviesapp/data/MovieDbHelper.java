@@ -25,7 +25,7 @@ public class MovieDbHelper extends SQLiteOpenHelper {
                 + MovieEntry.COLUMN_POSTER_PATH + " TEXT, "
                 + MovieEntry.COLUMN_BACKDROP_PATH + " TEXT, "
                 + MovieEntry.COLUMN_RELEASE_DATE + " TEXT, "
-                + MovieEntry.COLUMN_VOTE_AVERAGE + " REAL NOT NULL DEFAULT 0"
+                + MovieEntry.COLUMN_VOTE_AVERAGE + " REAL NOT NULL"
                 + ");";
 
         db.execSQL(SQL_CREATE_PETS_TABLE);

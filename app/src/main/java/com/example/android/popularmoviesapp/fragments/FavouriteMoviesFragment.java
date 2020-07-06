@@ -2,6 +2,7 @@ package com.example.android.popularmoviesapp.fragments;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -56,21 +57,27 @@ public class FavouriteMoviesFragment extends Fragment implements MovieAdapter.On
                 MovieEntry.COLUMN_POSTER_PATH
         };
 
-        getContext().getContentResolver().query(
+        Cursor cursor = getContext().getContentResolver().query(
                 MovieEntry.CONTENT_URI,
                 projection,
                 null,
                 null,
                 null
         );
-        return null;
+        return cursor;
     }
 
     // for MovieAdapter.OnListItemClickListener callback interface
     @Override
     public void onClick(Movie movie) {
-        Intent intent = new Intent(getActivity(), DetailsActivity.class);
-        intent.putExtra("MOVIE", movie); // made movie parcelable to pass hte object of type Movie using intent
-        startActivity(intent);
+        // don't need this here
+    }
+
+    @Override
+    public void onClick(long id) {
+        Intent favouriteMovieDetailsIntent = new Intent(getActivity(), DetailsActivity.class);
+        Uri uriForMovieClicked = MovieEntry.buildUriWithId(id);
+        favouriteMovieDetailsIntent.setData(uriForMovieClicked);
+        startActivity(favouriteMovieDetailsIntent);
     }
 }
