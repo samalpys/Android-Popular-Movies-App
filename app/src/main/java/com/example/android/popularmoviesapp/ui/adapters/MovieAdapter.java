@@ -1,4 +1,4 @@
-package com.example.android.popularmoviesapp;
+package com.example.android.popularmoviesapp.ui.adapters;
 
 import android.database.Cursor;
 import android.view.LayoutInflater;
@@ -6,8 +6,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.example.android.popularmoviesapp.R;
 import com.example.android.popularmoviesapp.model.Movie;
-import com.example.android.popularmoviesapp.data.MovieContract.MovieEntry;
+//import com.example.android.popularmoviesapp.data.MovieContract.MovieEntry;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -60,10 +61,10 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MoiveViewHol
             posterPath = movie.getPosterPath();
 //            id = movie.getId();
         } else {
-            if (mCursor.moveToPosition(position)) {
-                posterPath = mCursor.getString(mCursor.getColumnIndex(MovieEntry.COLUMN_POSTER_PATH));
-//                id = mCursor.getLong(mCursor.getColumnIndex(MovieEntry.COLUMN_ID));
-            }
+//            if (mCursor.moveToPosition(position)) {
+//                posterPath = mCursor.getString(mCursor.getColumnIndex(MovieEntry.COLUMN_POSTER_PATH));
+////                id = mCursor.getLong(mCursor.getColumnIndex(MovieEntry.COLUMN_ID));
+//            }
         }
 //        if (id != -1) holder.mItem.setId((int) id);
         Picasso.get()
@@ -111,11 +112,12 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MoiveViewHol
             int position = getAdapterPosition();
             if (!isCursorData) {
                 mListener.onClick(movies.get(position));
-            } else {
-                mCursor.moveToPosition(position);
-                long id = mCursor.getLong(mCursor.getColumnIndex(MovieEntry.COLUMN_ID));
-                mListener.onClick(id);
             }
+//            else {
+//                mCursor.moveToPosition(position);
+//                long id = mCursor.getLong(mCursor.getColumnIndex(MovieEntry.COLUMN_ID));
+//                mListener.onClick(id);
+//            }
         }
     }
 }

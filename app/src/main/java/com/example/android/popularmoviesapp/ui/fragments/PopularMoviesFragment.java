@@ -1,4 +1,4 @@
-package com.example.android.popularmoviesapp.fragments;
+package com.example.android.popularmoviesapp.ui.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -6,9 +6,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.android.popularmoviesapp.DetailsActivity;
-import com.example.android.popularmoviesapp.MovieAdapter;
-import com.example.android.popularmoviesapp.MoviesQueryTask;
+import com.example.android.popularmoviesapp.ui.activites.DetailsActivity;
+import com.example.android.popularmoviesapp.ui.adapters.MovieAdapter;
+import com.example.android.popularmoviesapp.ui.MoviesQueryTask;
 import com.example.android.popularmoviesapp.R;
 import com.example.android.popularmoviesapp.model.Movie;
 
@@ -30,7 +30,7 @@ public class PopularMoviesFragment extends Fragment implements
     RecyclerView mRecyclerView;
 
     private MovieAdapter mMovieAdapter;
-    private static final int NUMBER_OF_COLUMNS = 2;
+    private static final int NUMBER_OF_COLUMNS = 3;
 
 
     @Nullable

@@ -1,4 +1,4 @@
-package com.example.android.popularmoviesapp;
+package com.example.android.popularmoviesapp.ui.activites;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
@@ -6,6 +6,8 @@ import androidx.viewpager.widget.ViewPager;
 
 import android.os.Bundle;
 
+import com.example.android.popularmoviesapp.R;
+import com.example.android.popularmoviesapp.ui.adapters.MoviePagerAdapter;
 import com.google.android.material.tabs.TabLayout;
 
 

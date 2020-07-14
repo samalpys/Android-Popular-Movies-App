@@ -1,8 +1,8 @@
-package com.example.android.popularmoviesapp;
+package com.example.android.popularmoviesapp.ui.adapters;
 
-import com.example.android.popularmoviesapp.fragments.FavouriteMoviesFragment;
-import com.example.android.popularmoviesapp.fragments.PopularMoviesFragment;
-import com.example.android.popularmoviesapp.fragments.TopRatedMoviesFragment;
+import com.example.android.popularmoviesapp.ui.fragments.FavouriteMoviesFragment;
+import com.example.android.popularmoviesapp.ui.fragments.PopularMoviesFragment;
+import com.example.android.popularmoviesapp.ui.fragments.TopRatedMoviesFragment;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
