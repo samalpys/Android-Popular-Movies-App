@@ -22,7 +22,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class FavouriteMoviesFragment extends Fragment
-//        implements MovieAdapter.OnListItemClickListener
+        implements MovieAdapter.OnListItemClickListener
     {
 
     @BindView(R.id.rv_movies)
@@ -68,17 +68,17 @@ public class FavouriteMoviesFragment extends Fragment
 //        return cursor;
 //    }
 
-//    // for MovieAdapter.OnListItemClickListener callback interface
-//    @Override
-//    public void onClick(Movie movie) {
-//        // don't need this here
-//    }
-//
-//    @Override
-//    public void onClick(long id) {
+    // for MovieAdapter.OnListItemClickListener callback interface
+    @Override
+    public void onClick(Movie movie) {
+        // don't need this here
+    }
+
+    @Override
+    public void onClick(long id) {
 //        Intent favouriteMovieDetailsIntent = new Intent(getActivity(), DetailsActivity.class);
 //        Uri uriForMovieClicked = MovieEntry.buildUriWithId(id);
 //        favouriteMovieDetailsIntent.setData(uriForMovieClicked);
 //        startActivity(favouriteMovieDetailsIntent);
-//    }
+    }
 }

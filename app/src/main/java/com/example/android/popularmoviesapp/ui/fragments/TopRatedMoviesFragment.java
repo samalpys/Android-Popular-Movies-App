@@ -31,7 +31,7 @@ public class TopRatedMoviesFragment extends Fragment implements
     RecyclerView mRecyclerView;
 
     private MovieAdapter mMovieAdapter;
-    private static final int NUMBER_OF_COLUMNS = 2;
+    private static final int NUMBER_OF_COLUMNS = 3;
 
 
     @Nullable
