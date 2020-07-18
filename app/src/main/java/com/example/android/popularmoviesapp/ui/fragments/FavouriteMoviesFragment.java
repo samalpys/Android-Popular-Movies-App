@@ -6,7 +6,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.android.popularmoviesapp.R;
-import com.example.android.popularmoviesapp.ui.adapters.MovieAdapter;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -21,7 +20,6 @@ public class FavouriteMoviesFragment extends Fragment {
     @BindView(R.id.rv_movies)
     RecyclerView mRecyclerView;
 
-    private MovieAdapter mMovieAdapter;
     private static final int NUMBER_OF_COLUMNS = 3;
 
 

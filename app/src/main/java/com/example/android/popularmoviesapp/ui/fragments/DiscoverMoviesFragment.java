@@ -1,19 +1,19 @@
 package com.example.android.popularmoviesapp.ui.fragments;
 
-
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.android.popularmoviesapp.R;
 import com.example.android.popularmoviesapp.models.MovieResponse;
 import com.example.android.popularmoviesapp.network.RetrofitClient;
 import com.example.android.popularmoviesapp.models.Movie;
+import com.example.android.popularmoviesapp.R;
 import com.example.android.popularmoviesapp.ui.activites.DetailsActivity;
 import com.example.android.popularmoviesapp.ui.adapters.MovieAdapter;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -28,15 +28,30 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class TopRatedMoviesFragment extends Fragment
+public class DiscoverMoviesFragment extends Fragment
         implements MovieAdapter.OnMovieClickListener {
 
     @BindView(R.id.rv_movies)
     RecyclerView mRecyclerView;
 
+    private String sortBy;
     private MovieAdapter mMovieAdapter;
     private static final int NUMBER_OF_COLUMNS = 3;
 
+    public static DiscoverMoviesFragment newInstance(String sortBy) {
+        DiscoverMoviesFragment fragment = new DiscoverMoviesFragment();
+        Bundle args = new Bundle();
+        args.putString("sortBy", sortBy);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        sortBy = getArguments() != null ?
+                getArguments().getString("sortBy", "") : "popularity.desc";
+    }
 
     @Nullable
     @Override
@@ -48,37 +63,36 @@ public class TopRatedMoviesFragment extends Fragment
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-
         mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), NUMBER_OF_COLUMNS));
         mRecyclerView.setHasFixedSize(true);
 
         mMovieAdapter = new MovieAdapter(null, this);
         mRecyclerView.setAdapter(mMovieAdapter);
 
-
-        RetrofitClient retrofitClient = new RetrofitClient();
         Call<MovieResponse> call = RetrofitClient.getInstance().getPopularMovies(
                 "9321c4fc5f95b92bce700096da663cde",
-                "vote_average.desc",
+                sortBy,
                 1
         );
 
         call.enqueue(new Callback<MovieResponse>() {
             @Override
-            public void onResponse(Call<MovieResponse> call, Response<MovieResponse> response) {
+            public void onResponse(@NotNull Call<MovieResponse> call, @NotNull Response<MovieResponse> response) {
                 if (!response.isSuccessful()) {
                     return;
                 }
 
                 MovieResponse movieResponse = response.body();
-                List<Movie> movies = movieResponse.getMovies();
-
-                mMovieAdapter.swapData(movies);
+                if (movieResponse != null) {
+                    List<Movie> movies = movieResponse.getMovies();
+                    mMovieAdapter.swapData(movies);
+                }
             }
 
             @Override
-            public void onFailure(Call<MovieResponse> call, Throwable t) { }
+            public void onFailure(@NotNull Call<MovieResponse> call, @NotNull Throwable t) { }
         });
+
     }
 
     @Override
@@ -94,8 +108,7 @@ public class TopRatedMoviesFragment extends Fragment
     @Override
     public void onClick(Movie movie) {
         Intent intent = new Intent(getActivity(), DetailsActivity.class);
-        intent.putExtra("MOVIE", (Parcelable) movie);
+        intent.putExtra("MOVIE", movie);
         startActivity(intent);
     }
-
 }

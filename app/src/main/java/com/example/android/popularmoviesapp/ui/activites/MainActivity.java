@@ -2,8 +2,7 @@ package com.example.android.popularmoviesapp.ui.activites;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentTransaction;
-
+import androidx.fragment.app.FragmentManager;
 
 import android.os.Bundle;
 import android.view.Menu;
@@ -11,9 +10,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.example.android.popularmoviesapp.R;
+import com.example.android.popularmoviesapp.ui.fragments.DiscoverMoviesFragment;
 import com.example.android.popularmoviesapp.ui.fragments.FavouriteMoviesFragment;
-import com.example.android.popularmoviesapp.ui.fragments.PopularMoviesFragment;
-import com.example.android.popularmoviesapp.ui.fragments.TopRatedMoviesFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 
@@ -26,26 +24,35 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.fragment_container, new PopularMoviesFragment()).commit();
+        replaceByDiscoverMoviesFragment("popularity.desc");
 
         bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
             switch(item.getItemId()) {
                 case R.id.action_trending:
-                    getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.fragment_container, new PopularMoviesFragment())
-                            .commit();
+                    replaceByDiscoverMoviesFragment("popularity.desc");
                     return true;
                 case R.id.action_favourite:
-                    getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.fragment_container, new FavouriteMoviesFragment())
-                            .commit();
+                    replaceByFavouriteMoviesFragment();
                     return true;
                 default:
                     return false;
             }
         });
+    }
+
+    private void replaceByDiscoverMoviesFragment(String sortBy) {
+        FragmentManager fm = getSupportFragmentManager();
+        fm.beginTransaction()
+                .replace(R.id.fragment_container, DiscoverMoviesFragment.newInstance(sortBy))
+                .commit();
+    }
+
+    private void replaceByFavouriteMoviesFragment() {
+        FragmentManager fm = getSupportFragmentManager();
+        fm.beginTransaction()
+                .replace(R.id.fragment_container, new FavouriteMoviesFragment())
+                .commit();
     }
 
     @Override
@@ -60,14 +67,10 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
         switch (id) {
             case R.id.action_popular_movies:
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragment_container, new PopularMoviesFragment())
-                        .commit();
+                replaceByDiscoverMoviesFragment("popularity.desc");
                 return true;
             case R.id.action_top_rated:
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragment_container, new TopRatedMoviesFragment())
-                        .commit();
+                replaceByDiscoverMoviesFragment("vote_average.desc");
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
