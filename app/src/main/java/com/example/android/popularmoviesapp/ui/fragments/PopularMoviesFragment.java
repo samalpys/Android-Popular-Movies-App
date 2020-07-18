@@ -6,13 +6,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.android.popularmoviesapp.models.MovieResponse;
+import com.example.android.popularmoviesapp.network.RetrofitClient;
+import com.example.android.popularmoviesapp.models.Movie;
+import com.example.android.popularmoviesapp.R;
 import com.example.android.popularmoviesapp.ui.activites.DetailsActivity;
 import com.example.android.popularmoviesapp.ui.adapters.MovieAdapter;
-import com.example.android.popularmoviesapp.ui.MoviesQueryTask;
-import com.example.android.popularmoviesapp.R;
-import com.example.android.popularmoviesapp.model.Movie;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -21,10 +22,12 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
-public class PopularMoviesFragment extends Fragment implements
-        MovieAdapter.OnListItemClickListener,
-        MoviesQueryTask.OnTaskCompleted {
+public class PopularMoviesFragment extends Fragment
+        implements MovieAdapter.OnMovieClickListener {
 
     @BindView(R.id.rv_movies)
     RecyclerView mRecyclerView;
@@ -43,34 +46,51 @@ public class PopularMoviesFragment extends Fragment implements
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-
         mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), NUMBER_OF_COLUMNS));
         mRecyclerView.setHasFixedSize(true);
 
         mMovieAdapter = new MovieAdapter(null, this);
         mRecyclerView.setAdapter(mMovieAdapter);
 
-        MoviesQueryTask popularMoviesQueryTask = new MoviesQueryTask(this);
-        popularMoviesQueryTask.execute("popularity.desc");
+        Call<MovieResponse> call = RetrofitClient.getInstance().getPopularMovies(
+                "9321c4fc5f95b92bce700096da663cde",
+                "popularity.desc",
+                1
+        );
+
+        call.enqueue(new Callback<MovieResponse>() {
+            @Override
+            public void onResponse(Call<MovieResponse> call, Response<MovieResponse> response) {
+                if (!response.isSuccessful()) {
+                    return;
+                }
+
+                MovieResponse movieResponse = response.body();
+                List<Movie> movies = movieResponse.getMovies();
+
+                mMovieAdapter.swapData(movies);
+            }
+
+            @Override
+            public void onFailure(Call<MovieResponse> call, Throwable t) { }
+        });
+
     }
 
-    // for MovieAdapter.OnListItemClickListener callback interface
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (mMovieAdapter != null) {
+            mMovieAdapter.setOnMovieClickListenerToNull();
+            mMovieAdapter = null;
+        }
+    }
+
+    // for MovieAdapter.OnMovieClickListener
     @Override
     public void onClick(Movie movie) {
         Intent intent = new Intent(getActivity(), DetailsActivity.class);
-        intent.putExtra("MOVIE", movie); // made movie parcelable to pass hte object of type Movie using intent
+        intent.putExtra("MOVIE", movie);
         startActivity(intent);
     }
-
-    @Override
-    public void onClick(long id) {
-        // don't need this for now
-    }
-
-    // for MoviesQueryTask.OnTaskCompleted callback interface
-    @Override
-    public void onFetchData(ArrayList<Movie> movies) {
-        mMovieAdapter.swapData(movies);
-    }
-
 }

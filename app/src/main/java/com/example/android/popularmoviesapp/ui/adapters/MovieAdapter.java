@@ -1,72 +1,56 @@
 package com.example.android.popularmoviesapp.ui.adapters;
 
-import android.database.Cursor;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.example.android.popularmoviesapp.R;
-import com.example.android.popularmoviesapp.model.Movie;
-//import com.example.android.popularmoviesapp.data.MovieContract.MovieEntry;
+import com.example.android.popularmoviesapp.models.Movie;
 import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MoiveViewHolder> {
+public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.RetrofitMovieViewHolder> {
 
-    private ArrayList<Movie> movies;
-    private OnListItemClickListener mListener;
-    private Cursor mCursor;
-    private boolean isCursorData;
+    private List<Movie> movies;
+    private OnMovieClickListener mListener;
 
-    public interface OnListItemClickListener {
-        void onClick(Movie movie);
-        void onClick(long id);
-    }
-
-
-    public MovieAdapter(ArrayList<Movie> movies, OnListItemClickListener listener) {
+    public MovieAdapter(List<Movie> movies, OnMovieClickListener listener) {
         this.movies = movies;
         this.mListener = listener;
     }
 
-    public MovieAdapter(Cursor cursor, boolean isCursorData, OnListItemClickListener listener) {
-        this.isCursorData = true;
-        this.mCursor = cursor;
-        this.mListener = listener;
+    public interface OnMovieClickListener {
+        public void onClick(Movie movie);
+    }
+
+    public void setOnMovieClickListenerToNull() {
+        mListener = null;
     }
 
     @NonNull
     @Override
-    public MoiveViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public MovieAdapter.RetrofitMovieViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater
                 .from(parent.getContext())
                 .inflate(R.layout.list_item, parent, false);
-        MoiveViewHolder viewHolder = new MoiveViewHolder(itemView);
+        MovieAdapter.RetrofitMovieViewHolder viewHolder = new MovieAdapter.RetrofitMovieViewHolder(itemView);
         return viewHolder;
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MoiveViewHolder holder, int position) {
-//        long id = -1;
+    public void onBindViewHolder(@NonNull MovieAdapter.RetrofitMovieViewHolder holder, int position) {
         String posterPath = "";
 
-        if (!isCursorData) {
-            Movie movie = movies.get(position);
-            posterPath = movie.getPosterPath();
-//            id = movie.getId();
-        } else {
-//            if (mCursor.moveToPosition(position)) {
-//                posterPath = mCursor.getString(mCursor.getColumnIndex(MovieEntry.COLUMN_POSTER_PATH));
-////                id = mCursor.getLong(mCursor.getColumnIndex(MovieEntry.COLUMN_ID));
-//            }
-        }
-//        if (id != -1) holder.mItem.setId((int) id);
+        Movie movie = movies.get(position);
+
+        posterPath = movie.getPosterPath();
+
         Picasso.get()
                 .load(posterPath)
                 .resize(486,612)
@@ -75,34 +59,23 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MoiveViewHol
 
     @Override
     public int getItemCount() {
-        if (!isCursorData) {
-            if (movies != null) return movies.size();
-        } else {
-            if (mCursor != null) return mCursor.getCount();
-        }
-        return 0;
+        return movies!=null ? movies.size() : 0;
     }
 
-    public void swapData(ArrayList<Movie> movies) {
+    public void swapData(List<Movie> movies) {
         this.movies = movies;
         notifyDataSetChanged();
     }
 
-    public void swapCursor(Cursor newCursor) {
-        if (mCursor != null) mCursor.close();
-        this.mCursor = newCursor;
-        notifyDataSetChanged();
-    }
 
-    public class MoiveViewHolder extends  RecyclerView.ViewHolder implements View.OnClickListener {
+    class RetrofitMovieViewHolder extends RecyclerView.ViewHolder
+            implements View.OnClickListener {
 
         private final ImageView mPoster;
-        private final CardView mItem;
 
-        public MoiveViewHolder(@NonNull View itemView) {
+        public RetrofitMovieViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            mItem = itemView.findViewById(R.id.item);
             mPoster = itemView.findViewById(R.id.iv_thumbnail);
             itemView.setOnClickListener(this);
         }
@@ -110,14 +83,8 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MoiveViewHol
         @Override
         public void onClick(View v) {
             int position = getAdapterPosition();
-            if (!isCursorData) {
-                mListener.onClick(movies.get(position));
-            }
-//            else {
-//                mCursor.moveToPosition(position);
-//                long id = mCursor.getLong(mCursor.getColumnIndex(MovieEntry.COLUMN_ID));
-//                mListener.onClick(id);
-//            }
+            mListener.onClick(movies.get(position));
         }
     }
 }
+
