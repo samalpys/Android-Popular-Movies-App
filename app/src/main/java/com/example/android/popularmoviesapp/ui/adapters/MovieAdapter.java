@@ -6,13 +6,12 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.example.android.popularmoviesapp.R;
-import com.example.android.popularmoviesapp.models.Movie;
+import com.example.android.popularmoviesapp.model.Movie;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
 import androidx.annotation.NonNull;
-import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.RetrofitMovieViewHolder> {

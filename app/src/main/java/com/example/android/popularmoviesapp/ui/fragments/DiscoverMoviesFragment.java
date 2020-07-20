@@ -6,27 +6,24 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.android.popularmoviesapp.models.MovieResponse;
-import com.example.android.popularmoviesapp.network.RetrofitClient;
-import com.example.android.popularmoviesapp.models.Movie;
+import com.example.android.popularmoviesapp.model.MovieResponse;
+import com.example.android.popularmoviesapp.model.Movie;
 import com.example.android.popularmoviesapp.R;
 import com.example.android.popularmoviesapp.ui.activites.DetailsActivity;
 import com.example.android.popularmoviesapp.ui.adapters.MovieAdapter;
-
-import org.jetbrains.annotations.NotNull;
+import com.example.android.popularmoviesapp.viewmodel.MovieResponseViewModel;
 
 import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class DiscoverMoviesFragment extends Fragment
         implements MovieAdapter.OnMovieClickListener {
@@ -68,31 +65,39 @@ public class DiscoverMoviesFragment extends Fragment
 
         mMovieAdapter = new MovieAdapter(null, this);
         mRecyclerView.setAdapter(mMovieAdapter);
+    }
 
-        Call<MovieResponse> call = RetrofitClient.getInstance().getPopularMovies(
-                "9321c4fc5f95b92bce700096da663cde",
-                sortBy,
-                1
-        );
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
 
-        call.enqueue(new Callback<MovieResponse>() {
-            @Override
-            public void onResponse(@NotNull Call<MovieResponse> call, @NotNull Response<MovieResponse> response) {
-                if (!response.isSuccessful()) {
-                    return;
+        final MovieResponseViewModel viewModel =
+                ViewModelProviders.of(this).get(MovieResponseViewModel.class);
+
+        if (sortBy.equals("popularity.desc")) {
+            viewModel.getPopularMovieResponseObservable().observe(this, new Observer<MovieResponse>() {
+                @Override
+                public void onChanged(MovieResponse movieResponse) {
+                    updateAdapter(movieResponse);
                 }
-
-                MovieResponse movieResponse = response.body();
-                if (movieResponse != null) {
-                    List<Movie> movies = movieResponse.getMovies();
-                    mMovieAdapter.swapData(movies);
+            });
+        } else if (sortBy.equals("vote_average.desc")) {
+            viewModel.getTopRatedMovieResponseObservable().observe(this, new Observer<MovieResponse>() {
+                @Override
+                public void onChanged(MovieResponse movieResponse) {
+                    updateAdapter(movieResponse);
                 }
+            });
+        }
+    }
+
+    public void updateAdapter(MovieResponse movieResponse) {
+        if (movieResponse != null) {
+            List<Movie> movies = movieResponse.getMovies();
+            if (movies != null && movies.size() != 0) {
+                mMovieAdapter.swapData(movies);
             }
-
-            @Override
-            public void onFailure(@NotNull Call<MovieResponse> call, @NotNull Throwable t) { }
-        });
-
+        }
     }
 
     @Override

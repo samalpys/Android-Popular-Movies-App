@@ -12,7 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.android.popularmoviesapp.R;
-import com.example.android.popularmoviesapp.models.Movie;
+import com.example.android.popularmoviesapp.model.Movie;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.squareup.picasso.Picasso;
 
