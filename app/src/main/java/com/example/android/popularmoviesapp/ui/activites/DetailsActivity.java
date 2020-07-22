@@ -1,6 +1,8 @@
 package com.example.android.popularmoviesapp.ui.activites;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -13,8 +15,11 @@ import android.widget.Toast;
 
 import com.example.android.popularmoviesapp.R;
 import com.example.android.popularmoviesapp.model.Movie;
+import com.example.android.popularmoviesapp.viewmodel.MovieViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.squareup.picasso.Picasso;
+
+import static com.example.android.popularmoviesapp.ui.fragments.DiscoverMoviesFragment.INTENT_EXTRA_MOVIE_ID;
 
 public class DetailsActivity extends AppCompatActivity {
 
@@ -33,7 +38,6 @@ public class DetailsActivity extends AppCompatActivity {
     @BindView(R.id.fab)
     FloatingActionButton mFab;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,26 +45,43 @@ public class DetailsActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         Intent intent = getIntent();
-        if (intent.hasExtra("MOVIE")) {
+        if (intent.hasExtra(INTENT_EXTRA_MOVIE_ID)) {
 
-            Movie movie = intent.getParcelableExtra("MOVIE");
-
-            if (getSupportActionBar() != null) {
-                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-                getSupportActionBar().setTitle(movie.getTitle());
+            long movieId = intent.getLongExtra(INTENT_EXTRA_MOVIE_ID, -1);
+            if (movieId == -1) {
+                Toast.makeText(this, "Sorry, error has occurred!", Toast.LENGTH_SHORT).show();
+                this.onBackPressed();
             }
 
-            Picasso.get().load(movie.getBackdropPath()).into(mHeaderPoster);
-            Picasso.get().load(movie.getPosterPath()).resize(278, 350).into(mPoster);
-            mOriginalTitle.setText(movie.getTitle());
-            mReleaseDate.setText(movie.getReleaseDate());
-            mVoteAverage.setText(movie.getVoteAverage() + "/10");
-            mOverview.setText(movie.getOverview());
-
-            mFab.setOnClickListener(new View.OnClickListener() {
+            final MovieViewModel viewModel = ViewModelProviders.of(this, new MovieViewModel.MovieViewModelFactory(this.getApplication(), movieId)).get(MovieViewModel.class);
+            viewModel.getMovieDetailsObservable().observe(this, new Observer<Movie>() {
                 @Override
-                public void onClick(View v) {
-                    Toast.makeText(DetailsActivity.this, "Clicked", Toast.LENGTH_SHORT).show();
+                public void onChanged(Movie movie) {
+
+                    if (movie != null) {
+
+                        if (getSupportActionBar() != null) {
+                            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                            getSupportActionBar().setTitle(movie.getTitle());
+                        }
+
+                        Picasso.get().load(movie.getBackdropPath()).into(mHeaderPoster);
+                        Picasso.get().load(movie.getPosterPath()).resize(278, 350).into(mPoster);
+                        mOriginalTitle.setText(movie.getTitle());
+                        mReleaseDate.setText(movie.getReleaseDate());
+                        mVoteAverage.setText(movie.getVoteAverage() + "/10");
+                        mOverview.setText(movie.getOverview());
+
+                        mFab.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Toast.makeText(DetailsActivity.this, "Clicked", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+
+                    } else {
+                        System.out.println("HERE: movie is null");
+                    }
                 }
             });
         }

@@ -10,13 +10,9 @@ import retrofit2.http.Query;
 
 public interface RetrofitService {
 
-    @GET("movie/popular")
-    Call<MovieResponse> getPopularMovies(
-            @Query("page") int page
-    );
-
-    @GET("movie/top_rated")
-    Call<MovieResponse> getTopRatedMovies(
+    @GET("discover/movie")
+    Call<MovieResponse> getMovies(
+            @Query("sort_by") String sortBy,
             @Query("page") int page
     );
 

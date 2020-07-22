@@ -12,6 +12,8 @@ import com.example.android.popularmoviesapp.R;
 import com.example.android.popularmoviesapp.ui.activites.DetailsActivity;
 import com.example.android.popularmoviesapp.ui.adapters.MovieAdapter;
 import com.example.android.popularmoviesapp.viewmodel.MovieResponseViewModel;
+import com.example.android.popularmoviesapp.viewmodel.MovieResponseViewModel.MovieResponseViewModelFactory;
+
 
 import java.util.List;
 
@@ -28,12 +30,18 @@ import butterknife.ButterKnife;
 public class DiscoverMoviesFragment extends Fragment
         implements MovieAdapter.OnMovieClickListener {
 
+    private static final int NUMBER_OF_COLUMNS = 3;
+    public static final String INTENT_EXTRA_MOVIE_ID = "MOVIE_ID";
+
+
     @BindView(R.id.rv_movies)
     RecyclerView mRecyclerView;
 
+
+
     private String sortBy;
     private MovieAdapter mMovieAdapter;
-    private static final int NUMBER_OF_COLUMNS = 3;
+
 
     public static DiscoverMoviesFragment newInstance(String sortBy) {
         DiscoverMoviesFragment fragment = new DiscoverMoviesFragment();
@@ -71,32 +79,20 @@ public class DiscoverMoviesFragment extends Fragment
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        final MovieResponseViewModel viewModel =
-                ViewModelProviders.of(this).get(MovieResponseViewModel.class);
+        final MovieResponseViewModel viewModel = ViewModelProviders.of(this, new MovieResponseViewModelFactory(this.getActivity().getApplication(), sortBy)).get(MovieResponseViewModel.class);
 
-        if (sortBy.equals("popularity.desc")) {
-            viewModel.getPopularMovieResponseObservable().observe(this, new Observer<MovieResponse>() {
+        if (sortBy != null) {
+            viewModel.getMovieResponseObservable().observe(this, new Observer<MovieResponse>() {
                 @Override
                 public void onChanged(MovieResponse movieResponse) {
-                    updateAdapter(movieResponse);
+                    if (movieResponse != null) {
+                        List<Movie> movies = movieResponse.getMovies();
+                        if (movies != null && movies.size() != 0) {
+                            mMovieAdapter.swapData(movies);
+                        }
+                    }
                 }
             });
-        } else if (sortBy.equals("vote_average.desc")) {
-            viewModel.getTopRatedMovieResponseObservable().observe(this, new Observer<MovieResponse>() {
-                @Override
-                public void onChanged(MovieResponse movieResponse) {
-                    updateAdapter(movieResponse);
-                }
-            });
-        }
-    }
-
-    public void updateAdapter(MovieResponse movieResponse) {
-        if (movieResponse != null) {
-            List<Movie> movies = movieResponse.getMovies();
-            if (movies != null && movies.size() != 0) {
-                mMovieAdapter.swapData(movies);
-            }
         }
     }
 
@@ -111,9 +107,9 @@ public class DiscoverMoviesFragment extends Fragment
 
     // for MovieAdapter.OnMovieClickListener
     @Override
-    public void onClick(Movie movie) {
+    public void onClick(long movieId) {
         Intent intent = new Intent(getActivity(), DetailsActivity.class);
-        intent.putExtra("MOVIE", movie);
+        intent.putExtra(INTENT_EXTRA_MOVIE_ID, movieId);
         startActivity(intent);
     }
 }

@@ -25,7 +25,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.RetrofitMovi
     }
 
     public interface OnMovieClickListener {
-        public void onClick(Movie movie);
+        public void onClick(long movieId);
     }
 
     public void setOnMovieClickListenerToNull() {
@@ -82,7 +82,8 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.RetrofitMovi
         @Override
         public void onClick(View v) {
             int position = getAdapterPosition();
-            mListener.onClick(movies.get(position));
+            long movieId = movies.get(position).getId();
+            mListener.onClick(movieId);
         }
     }
 }

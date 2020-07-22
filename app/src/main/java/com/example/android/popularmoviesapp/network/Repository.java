@@ -50,26 +50,10 @@ public class Repository {
         return repositoryInstance;
     }
 
-    public LiveData<MovieResponse> getPopularMovies(int page) {
+    public LiveData<MovieResponse> getMovies(String sortBy, int page) {
         final MutableLiveData<MovieResponse> data = new MutableLiveData<>();
 
-        retrofitService.getPopularMovies(page).enqueue(new Callback<MovieResponse>() {
-            @Override
-            public void onResponse(Call<MovieResponse> call, Response<MovieResponse> response) {
-                data.setValue(response.body());
-            }
-
-            @Override
-            public void onFailure(Call<MovieResponse> call, Throwable t) { }
-        });
-
-        return data;
-    }
-
-    public LiveData<MovieResponse> getTopRatedMovies(int page) {
-        final MutableLiveData<MovieResponse> data = new MutableLiveData<>();
-
-        retrofitService.getTopRatedMovies(page).enqueue(new Callback<MovieResponse>() {
+        retrofitService.getMovies(sortBy, page).enqueue(new Callback<MovieResponse>() {
             @Override
             public void onResponse(Call<MovieResponse> call, Response<MovieResponse> response) {
                 data.setValue(response.body());
