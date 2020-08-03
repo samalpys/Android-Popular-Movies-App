@@ -67,8 +67,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.RetrofitMovi
     }
 
 
-    class RetrofitMovieViewHolder extends RecyclerView.ViewHolder
-            implements View.OnClickListener {
+    class RetrofitMovieViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private final ImageView mPoster;
 

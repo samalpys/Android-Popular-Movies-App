@@ -2,6 +2,7 @@ package com.example.android.popularmoviesapp.ui.activites;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.FragmentManager;
 
 import android.os.Bundle;
@@ -10,24 +11,23 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.example.android.popularmoviesapp.R;
+import com.example.android.popularmoviesapp.databinding.ActivityMainBinding;
 import com.example.android.popularmoviesapp.ui.fragments.DiscoverMoviesFragment;
 import com.example.android.popularmoviesapp.ui.fragments.FavouriteMoviesFragment;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 
 public class MainActivity extends AppCompatActivity {
 
-    private BottomNavigationView bottomNavigationView;
+    ActivityMainBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
         replaceByDiscoverMoviesFragment("popularity.desc");
 
-        bottomNavigationView = findViewById(R.id.bottom_navigation);
-        bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
+        binding.bottomNavigation.setOnNavigationItemSelectedListener(item -> {
             switch(item.getItemId()) {
                 case R.id.action_trending:
                     replaceByDiscoverMoviesFragment("popularity.desc");

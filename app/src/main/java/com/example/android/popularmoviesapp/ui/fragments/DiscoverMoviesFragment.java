@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.android.popularmoviesapp.databinding.FragmentMoviesListBinding;
 import com.example.android.popularmoviesapp.model.MovieResponse;
 import com.example.android.popularmoviesapp.model.Movie;
 import com.example.android.popularmoviesapp.R;
@@ -14,30 +15,23 @@ import com.example.android.popularmoviesapp.ui.adapters.MovieAdapter;
 import com.example.android.popularmoviesapp.viewmodel.MovieResponseViewModel;
 import com.example.android.popularmoviesapp.viewmodel.MovieResponseViewModel.MovieResponseViewModelFactory;
 
-
 import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
-public class DiscoverMoviesFragment extends Fragment
-        implements MovieAdapter.OnMovieClickListener {
+
+public class DiscoverMoviesFragment extends Fragment implements MovieAdapter.OnMovieClickListener {
+
+    FragmentMoviesListBinding binding;
 
     private static final int NUMBER_OF_COLUMNS = 3;
     public static final String INTENT_EXTRA_MOVIE_ID = "MOVIE_ID";
-
-
-    @BindView(R.id.rv_movies)
-    RecyclerView mRecyclerView;
-
-
 
     private String sortBy;
     private MovieAdapter mMovieAdapter;
@@ -61,18 +55,17 @@ public class DiscoverMoviesFragment extends Fragment
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_movies_list, container, false);
-        ButterKnife.bind(this, view);
-        return view;
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_movies_list, container, false);
+        return binding.getRoot();
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), NUMBER_OF_COLUMNS));
-        mRecyclerView.setHasFixedSize(true);
+        binding.recyclerViewMovies.setLayoutManager(new GridLayoutManager(getActivity(), NUMBER_OF_COLUMNS));
+        binding.recyclerViewMovies.setHasFixedSize(true);
 
         mMovieAdapter = new MovieAdapter(null, this);
-        mRecyclerView.setAdapter(mMovieAdapter);
+        binding.recyclerViewMovies.setAdapter(mMovieAdapter);
     }
 
     @Override

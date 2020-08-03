@@ -1,48 +1,31 @@
 package com.example.android.popularmoviesapp.ui.activites;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.android.popularmoviesapp.R;
+import com.example.android.popularmoviesapp.databinding.ActivityDetailsBinding;
 import com.example.android.popularmoviesapp.model.Movie;
 import com.example.android.popularmoviesapp.viewmodel.MovieViewModel;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.squareup.picasso.Picasso;
 
 import static com.example.android.popularmoviesapp.ui.fragments.DiscoverMoviesFragment.INTENT_EXTRA_MOVIE_ID;
 
 public class DetailsActivity extends AppCompatActivity {
 
-    @BindView(R.id.iv_poster)
-    ImageView mPoster;
-    @BindView(R.id.iv_header_poster)
-    ImageView mHeaderPoster;
-    @BindView(R.id.tv_original_title_content)
-    TextView mOriginalTitle;
-    @BindView(R.id.tv_release_date_content)
-    TextView mReleaseDate;
-    @BindView(R.id.tv_vote_average_content)
-    TextView mVoteAverage;
-    @BindView(R.id.tv_overview_content)
-    TextView mOverview;
-    @BindView(R.id.fab)
-    FloatingActionButton mFab;
+    ActivityDetailsBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_details);
-        ButterKnife.bind(this);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_details);
 
         Intent intent = getIntent();
         if (intent.hasExtra(INTENT_EXTRA_MOVIE_ID)) {
@@ -65,14 +48,13 @@ public class DetailsActivity extends AppCompatActivity {
                             getSupportActionBar().setTitle(movie.getTitle());
                         }
 
-                        Picasso.get().load(movie.getBackdropPath()).into(mHeaderPoster);
-                        Picasso.get().load(movie.getPosterPath()).resize(278, 350).into(mPoster);
-                        mOriginalTitle.setText(movie.getTitle());
-                        mReleaseDate.setText(movie.getReleaseDate());
-                        mVoteAverage.setText(movie.getVoteAverage() + "/10");
-                        mOverview.setText(movie.getOverview());
-
-                        mFab.setOnClickListener(new View.OnClickListener() {
+                        Picasso.get().load(movie.getBackdropPath()).into(binding.ivHeaderPoster);
+                        Picasso.get().load(movie.getPosterPath()).resize(278, 350).into(binding.extraDetails.ivPoster);
+                        binding.extraDetails.tvOriginalTitleContent.setText(movie.getTitle());
+                        binding.extraDetails.tvReleaseDateContent.setText(movie.getReleaseDate());
+                        binding.extraDetails.tvVoteAverageContent.setText(movie.getVoteAverage() + "/10");
+                        binding.extraDetails.tvOverviewContent.setText(movie.getOverview());
+                        binding.fab.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
                                 Toast.makeText(DetailsActivity.this, "Clicked", Toast.LENGTH_SHORT).show();
