@@ -16,7 +16,7 @@ public class MovieViewModel extends AndroidViewModel {
 
     public MovieViewModel(@NonNull Application application, long movieId) {
         super(application);
-        movieDetailsObservable = Repository.getInstance().getMovieDetails(movieId);
+        movieDetailsObservable = Repository.getInstance(application).getMovieDetails(movieId);
     }
 
     public LiveData<Movie> getMovieDetailsObservable() {

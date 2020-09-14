@@ -1,11 +1,24 @@
 package com.example.android.popularmoviesapp.model;
 
 
+import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
+
 import com.google.gson.annotations.SerializedName;
 
+@Entity(tableName = "movie_table")
 public class Movie {
 
-    private static final String IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w185";
+    private static final String IMAGE_BASE_URL = "https://image.tmdb.org/t/p/";
+    public static final String POSTER_SIZE = "w342";
+    public static final String BACKDROP_SIZE = "w780";
+
+//    @PrimaryKey(autoGenerate = true)
+//    private int databaseId;
+
+    @PrimaryKey(autoGenerate = false)
+    private Integer id;
 
     private Double popularity;
 
@@ -17,8 +30,6 @@ public class Movie {
 
     @SerializedName("poster_path")
     private String posterPath;
-
-    private Integer id;
 
     @SerializedName("adult")
     private Boolean isAdult;
@@ -40,10 +51,24 @@ public class Movie {
     @SerializedName("vote_average")
     private Double voteAverage;
 
+    public Movie() {
+    }
+
     private String overview;
 
     @SerializedName("release_date")
     private String releaseDate;
+
+    public Movie(Integer id, String posterPath, String backdropPath, String originalLanguage, String title, Double voteAverage, String overview, String releaseDate) {
+        this.id = id;
+        this.posterPath = posterPath;
+        this.backdropPath = backdropPath;
+        this.originalLanguage = originalLanguage;
+        this.title = title;
+        this.voteAverage = voteAverage;
+        this.overview = overview;
+        this.releaseDate = releaseDate;
+    }
 
     public Double getPopularity() {
         return popularity;
@@ -58,7 +83,7 @@ public class Movie {
     }
 
     public String getPosterPath() {
-        return IMAGE_BASE_URL + "/" + posterPath;
+        return IMAGE_BASE_URL + POSTER_SIZE + "/" + posterPath;
     }
 
     public Integer getId() {
@@ -70,7 +95,7 @@ public class Movie {
     }
 
     public String getBackdropPath() {
-        return IMAGE_BASE_URL + "/" + backdropPath;
+        return IMAGE_BASE_URL + BACKDROP_SIZE + "/" + backdropPath;
     }
 
     public String getOriginalLanguage() {
@@ -99,5 +124,57 @@ public class Movie {
 
     public String getReleaseDate() {
         return releaseDate;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public void setAdult(Boolean adult) {
+        isAdult = adult;
+    }
+
+    public void setBackdropPath(String backdropPath) {
+        this.backdropPath = backdropPath;
+    }
+
+    public void setOriginalLanguage(String originalLanguage) {
+        this.originalLanguage = originalLanguage;
+    }
+
+    public void setOriginalTitle(String originalTitle) {
+        this.originalTitle = originalTitle;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setVoteAverage(Double voteAverage) {
+        this.voteAverage = voteAverage;
+    }
+
+    public void setOverview(String overview) {
+        this.overview = overview;
+    }
+
+    public void setReleaseDate(String releaseDate) {
+        this.releaseDate = releaseDate;
+    }
+
+    public void setPopularity(Double popularity) {
+        this.popularity = popularity;
+    }
+
+    public void setVoteCount(Double voteCount) {
+        this.voteCount = voteCount;
+    }
+
+    public void setVideo(Boolean video) {
+        isVideo = video;
+    }
+
+    public void setPosterPath(String posterPath) {
+        this.posterPath = posterPath;
     }
 }

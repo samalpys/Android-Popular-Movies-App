@@ -1,11 +1,17 @@
 package com.example.android.popularmoviesapp.network;
 
+import android.app.Application;
+import android.os.AsyncTask;
+
+import com.example.android.popularmoviesapp.database.MovieDao;
+import com.example.android.popularmoviesapp.database.MovieDatabase;
 import com.example.android.popularmoviesapp.model.Movie;
 import com.example.android.popularmoviesapp.model.MovieResponse;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.util.List;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -23,12 +29,18 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class Repository {
 
-    private final static String BASE_URL = "http://api.themoviedb.org/3/";
+    // Retrofit
+    private final static String BASE_URL = "https://api.themoviedb.org/3/";
     private RetrofitService retrofitService;
     private static Repository repositoryInstance;
 
-    public Repository() {
+    // Room
+    private MovieDao mMovieDao;
+    private LiveData<List<Movie>> mAllFavouriteMovies;
 
+    private Repository(Application application) {
+
+        // for Retrofit
         OkHttpClient client = new OkHttpClient.Builder()
                 .addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BASIC))
                 .addInterceptor(new AuthInterceptor())
@@ -41,14 +53,21 @@ public class Repository {
                 .build();
 
         retrofitService = retrofit.create(RetrofitService.class);
+
+        // for Room
+        MovieDatabase db = MovieDatabase.getInstance(application);
+        mMovieDao = db.movieDao();
+        mAllFavouriteMovies = mMovieDao.getAllFavouriteMovies();
     }
 
-    public synchronized static Repository getInstance() {
+    public synchronized static Repository getInstance(Application application) {
         if (repositoryInstance == null) {
-            repositoryInstance = new Repository();
+            repositoryInstance = new Repository(application);
         }
         return repositoryInstance;
     }
+
+    // for Retrofit
 
     public LiveData<MovieResponse> getMovies(String sortBy, int page) {
         final MutableLiveData<MovieResponse> data = new MutableLiveData<>();
@@ -97,6 +116,72 @@ public class Repository {
             request = request.newBuilder().url(url).build();
 
             return chain.proceed(request);
+        }
+    }
+
+
+    // for Room
+
+    public LiveData<List<Movie>> getAllFavouriteMovies() {
+        return mAllFavouriteMovies;
+    }
+
+    public void insertFavouriteMovie(Movie movie) {
+        new InsertFavouriteMovieAsyncTask(mMovieDao).execute(movie);
+    }
+
+    private static class InsertFavouriteMovieAsyncTask extends AsyncTask<Movie, Void, Void> {
+
+        private MovieDao movieDao; // we need this to make db operations
+
+        public InsertFavouriteMovieAsyncTask(MovieDao movieDao) {
+            this.movieDao = movieDao;
+        }
+
+        @Override
+        protected Void doInBackground(Movie... movies) {
+            Movie movieToInsert = movies[0];
+            movieDao.insertFavouriteMovie(movieToInsert);
+            return null;
+        }
+    }
+
+    public void deleteFavouriteMovieById(int id) {
+        new DeleteFavouriteMovieByIdAsyncTask(mMovieDao).execute(id);
+    }
+
+    private static class DeleteFavouriteMovieByIdAsyncTask extends AsyncTask<Integer, Void, Void> {
+
+        private MovieDao movieDao; // we need this to make db operations
+
+        public DeleteFavouriteMovieByIdAsyncTask(MovieDao movieDao) {
+            this.movieDao = movieDao;
+        }
+
+        @Override
+        protected Void doInBackground(Integer... integers) {
+            Integer idToDelete = integers[0];
+            movieDao.deleteFavouriteMovieById(idToDelete);
+            return null;
+        }
+    }
+
+    public void deleteAllFavouriteMovies() {
+        new DeleteAllFavouriteMoviesAsyncTask(mMovieDao).execute();
+    }
+
+    private static class DeleteAllFavouriteMoviesAsyncTask extends AsyncTask<Void, Void, Void> {
+
+        private MovieDao movieDao; // we need this to make db operations
+
+        public DeleteAllFavouriteMoviesAsyncTask(MovieDao movieDao) {
+            this.movieDao = movieDao;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            movieDao.deleteAllFavouriteMovies();
+            return null;
         }
     }
 

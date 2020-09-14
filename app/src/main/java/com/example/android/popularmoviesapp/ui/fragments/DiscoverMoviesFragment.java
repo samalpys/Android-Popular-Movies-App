@@ -64,7 +64,7 @@ public class DiscoverMoviesFragment extends Fragment implements MovieAdapter.OnM
         binding.recyclerViewMovies.setLayoutManager(new GridLayoutManager(getActivity(), NUMBER_OF_COLUMNS));
         binding.recyclerViewMovies.setHasFixedSize(true);
 
-        mMovieAdapter = new MovieAdapter(null, this);
+        mMovieAdapter = new MovieAdapter(getActivity(),null, this);
         binding.recyclerViewMovies.setAdapter(mMovieAdapter);
     }
 

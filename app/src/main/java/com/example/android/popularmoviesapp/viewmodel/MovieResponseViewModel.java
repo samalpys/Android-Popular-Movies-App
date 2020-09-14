@@ -18,7 +18,7 @@ public class MovieResponseViewModel extends AndroidViewModel {
     public MovieResponseViewModel(Application application, String sortBy) {
         super(application);
 
-        movieResponseObservable = Repository.getInstance().getMovies(sortBy, 1);
+        movieResponseObservable = Repository.getInstance(application).getMovies(sortBy, 1);
     }
 
     public LiveData<MovieResponse> getMovieResponseObservable() {

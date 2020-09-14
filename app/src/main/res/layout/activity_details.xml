@@ -6,6 +6,7 @@
     tools:context=".ui.activites.DetailsActivity">
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
+        style="@style/Widget.Support.CoordinatorLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -14,6 +15,7 @@
             android:layout_width="match_parent"
             android:layout_height="256dp"
             android:fitsSystemWindows="true"
+            app:elevation="4dp"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
             <com.google.android.material.appbar.CollapsingToolbarLayout
@@ -24,7 +26,7 @@
                 app:contentScrim="?attr/colorPrimary"
                 app:expandedTitleMarginEnd="64dp"
                 app:expandedTitleMarginStart="48dp"
-                app:layout_scrollFlags="scroll|exitUntilCollapsed|snap">
+                app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
                 <ImageView
                     android:id="@+id/iv_header_poster"
@@ -40,7 +42,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="?attr/actionBarSize"
                     app:layout_collapseMode="pin"
-                    app:layout_scrollFlags="scroll|snap"
                     app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
             </com.google.android.material.appbar.CollapsingToolbarLayout>
@@ -51,6 +52,9 @@
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingBottom="16dp"
+            app:behavior_overlapTop="48dp"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
             <include
@@ -58,15 +62,6 @@
                 layout="@layout/activity_details_content" />
 
         </androidx.core.widget.NestedScrollView>
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fab"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            app:fabSize="normal"
-            app:layout_anchor="@id/main_appbar"
-            app:layout_anchorGravity="bottom|right|end" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

@@ -10,11 +10,13 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.android.popularmoviesapp.R;
 import com.example.android.popularmoviesapp.databinding.ActivityDetailsBinding;
 import com.example.android.popularmoviesapp.model.Movie;
+import com.example.android.popularmoviesapp.viewmodel.FavouriteMovieViewModel;
 import com.example.android.popularmoviesapp.viewmodel.MovieViewModel;
-import com.squareup.picasso.Picasso;
+//import com.squareup.picasso.Picasso;
 
 import static com.example.android.popularmoviesapp.ui.fragments.DiscoverMoviesFragment.INTENT_EXTRA_MOVIE_ID;
 
@@ -48,18 +50,15 @@ public class DetailsActivity extends AppCompatActivity {
                             getSupportActionBar().setTitle(movie.getTitle());
                         }
 
-                        Picasso.get().load(movie.getBackdropPath()).into(binding.ivHeaderPoster);
-                        Picasso.get().load(movie.getPosterPath()).resize(278, 350).into(binding.extraDetails.ivPoster);
-                        binding.extraDetails.tvOriginalTitleContent.setText(movie.getTitle());
-                        binding.extraDetails.tvReleaseDateContent.setText(movie.getReleaseDate());
-                        binding.extraDetails.tvVoteAverageContent.setText(movie.getVoteAverage() + "/10");
-                        binding.extraDetails.tvOverviewContent.setText(movie.getOverview());
-                        binding.fab.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                Toast.makeText(DetailsActivity.this, "Clicked", Toast.LENGTH_SHORT).show();
-                            }
-                        });
+//                        Picasso.get().load(movie.getBackdropPath()).into(binding.ivHeaderPoster);
+//                        Picasso.get().load(movie.getPosterPath()).resize(278, 350).into(binding.extraDetails.ivPoster);
+                        Glide.with(DetailsActivity.this).load(movie.getBackdropPath()).into(binding.ivHeaderPoster);
+                        Glide.with(DetailsActivity.this).load(movie.getPosterPath()).into(binding.extraDetails.ivPoster);
+                        binding.extraDetails.tvOriginalTitle.setText(movie.getTitle());
+                        binding.extraDetails.tvReleaseDate.setText(movie.getReleaseDate());
+                        binding.extraDetails.tvVoteAverage.setText(movie.getVoteAverage() + "/10");
+                        binding.extraDetails.tvOverview.setText(movie.getOverview());
+                        binding.extraDetails.tvLanguage.setText(movie.getOriginalLanguage());
 
                     } else {
                         System.out.println("HERE: movie is null");
