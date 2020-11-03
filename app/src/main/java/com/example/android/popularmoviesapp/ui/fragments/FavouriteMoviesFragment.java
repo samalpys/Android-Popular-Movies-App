@@ -1,16 +1,16 @@
 package com.example.android.popularmoviesapp.ui.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.example.android.popularmoviesapp.R;
-import com.example.android.popularmoviesapp.databinding.FragmentFavouriteMoviesListBinding;
 import com.example.android.popularmoviesapp.databinding.FragmentMoviesListBinding;
 import com.example.android.popularmoviesapp.model.Movie;
-import com.example.android.popularmoviesapp.ui.adapters.FavouriteMovieAdapter;
+import com.example.android.popularmoviesapp.ui.activites.DetailsActivity;
+import com.example.android.popularmoviesapp.ui.adapters.MovieAdapter;
 import com.example.android.popularmoviesapp.viewmodel.FavouriteMovieViewModel;
 
 import java.util.List;
@@ -23,27 +23,29 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
 
-public class FavouriteMoviesFragment extends Fragment {
+
+public class FavouriteMoviesFragment extends Fragment implements MovieAdapter.OnMovieClickListener {
 
     private static final int NUMBER_OF_COLUMNS = 3;
+    public static final String INTENT_EXTRA_MOVIE_ID = "MOVIE_ID";
 
-    FragmentFavouriteMoviesListBinding binding;
-    private FavouriteMovieAdapter mFavourtieMovieAdapter;
+    FragmentMoviesListBinding binding;
+    private MovieAdapter mFavourtieMovieAdapter;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_favourite_movies_list, container, false);
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_movies_list, container, false);
         return binding.getRoot();
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        binding.recyclerViewFavouriteMovies.setLayoutManager(new GridLayoutManager(getActivity(), NUMBER_OF_COLUMNS));
-        binding.recyclerViewFavouriteMovies.setHasFixedSize(true);
+        binding.recyclerViewMovies.setLayoutManager(new GridLayoutManager(getActivity(), NUMBER_OF_COLUMNS));
+        binding.recyclerViewMovies.setHasFixedSize(true);
 
-        mFavourtieMovieAdapter = new FavouriteMovieAdapter(getActivity(), null);
-        binding.recyclerViewFavouriteMovies.setAdapter(mFavourtieMovieAdapter);
+        mFavourtieMovieAdapter = new MovieAdapter(getActivity(), null, this);
+        binding.recyclerViewMovies.setAdapter(mFavourtieMovieAdapter);
     }
 
     @Override
@@ -55,12 +57,17 @@ public class FavouriteMoviesFragment extends Fragment {
             @Override
             public void onChanged(List<Movie> movies) {
                 if (movies != null && movies.size() != 0) {
-                    System.out.println("HERE: movies = " + movies);
                     mFavourtieMovieAdapter.swapData(movies);
-                    System.out.println("HERE: mFavourtieMovieAdapter.getItemCount() = " +mFavourtieMovieAdapter.getItemCount());
                 }
             }
         });
     }
 
+    // for MovieAdapter.OnMovieClickListener
+    @Override
+    public void onClick(long movieId) {
+        Intent intent = new Intent(getActivity(), DetailsActivity.class);
+        intent.putExtra(INTENT_EXTRA_MOVIE_ID, movieId);
+        startActivity(intent);
+    }
 }

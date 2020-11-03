@@ -39,7 +39,6 @@ public class Repository {
     private LiveData<List<Movie>> mAllFavouriteMovies;
 
     private Repository(Application application) {
-
         // for Retrofit
         OkHttpClient client = new OkHttpClient.Builder()
                 .addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BASIC))
@@ -68,7 +67,6 @@ public class Repository {
     }
 
     // for Retrofit
-
     public LiveData<MovieResponse> getMovies(String sortBy, int page) {
         final MutableLiveData<MovieResponse> data = new MutableLiveData<>();
 
@@ -121,7 +119,6 @@ public class Repository {
 
 
     // for Room
-
     public LiveData<List<Movie>> getAllFavouriteMovies() {
         return mAllFavouriteMovies;
     }

@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -30,21 +31,18 @@ public class FavouriteMovieAdapter extends RecyclerView.Adapter<FavouriteMovieAd
     public FavouriteMovieViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater
                 .from(parent.getContext())
-                .inflate(R.layout.favourite_list_item, parent, false);
+                .inflate(R.layout.movie_item, parent, false);
         FavouriteMovieViewHolder viewHolder = new FavouriteMovieViewHolder(itemView);
         return viewHolder;
     }
 
     @Override
     public void onBindViewHolder(@NonNull FavouriteMovieViewHolder holder, int position) {
-        String posterPath = "";
         Movie movie = favouriteMovies.get(position);
-        posterPath = movie.getPosterPath();
-//        Picasso.get()
-//                .load(posterPath)
-//                .resize(486,612)
-//                .into(holder.mPoster);
-        Glide.with(context).load(posterPath).into(holder.mPoster);
+
+        Glide.with(context).load(movie.getPosterPath()).into(holder.mPoster);
+        holder.mOriginalTitle.setText(movie.getOriginalTitle());
+        holder.mVoteAverage.setText(String.valueOf(movie.getVoteAverage()));
     }
 
     @Override
@@ -61,11 +59,15 @@ public class FavouriteMovieAdapter extends RecyclerView.Adapter<FavouriteMovieAd
     class FavouriteMovieViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private final ImageView mPoster;
+        private final TextView mOriginalTitle;
+        private final TextView mVoteAverage;
 
         public FavouriteMovieViewHolder(@NonNull View itemView) {
             super(itemView);
 
             mPoster = itemView.findViewById(R.id.iv_thumbnail);
+            mOriginalTitle = itemView.findViewById(R.id.tv_original_title);
+            mVoteAverage = itemView.findViewById(R.id.tv_vote_average);
             itemView.setOnClickListener(this);
         }
 
