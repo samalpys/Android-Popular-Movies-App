@@ -8,10 +8,10 @@ import android.view.ViewGroup;
 
 import com.example.android.popularmoviesapp.R;
 import com.example.android.popularmoviesapp.databinding.FragmentMoviesListBinding;
-import com.example.android.popularmoviesapp.model.Movie;
+import com.example.android.popularmoviesapp.data.models.Movie;
 import com.example.android.popularmoviesapp.ui.activites.DetailsActivity;
 import com.example.android.popularmoviesapp.ui.adapters.MovieAdapter;
-import com.example.android.popularmoviesapp.viewmodel.FavouriteMovieViewModel;
+import com.example.android.popularmoviesapp.viewmodels.FavouriteMoviesViewModel;
 
 import java.util.List;
 
@@ -32,7 +32,7 @@ public class FavouriteMoviesFragment extends Fragment implements MovieAdapter.On
     private FragmentMoviesListBinding binding;
     private MovieAdapter mFavourtieMovieAdapter;
 
-    private FavouriteMovieViewModel viewModel;
+    private FavouriteMoviesViewModel viewModel;
 
 
     @Nullable
@@ -55,7 +55,7 @@ public class FavouriteMoviesFragment extends Fragment implements MovieAdapter.On
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         // this way ViewModel will be destroyed when Fragment is finished
-        viewModel = ViewModelProviders.of(this).get(FavouriteMovieViewModel.class);
+        viewModel = ViewModelProviders.of(this).get(FavouriteMoviesViewModel.class);
         viewModel.getAllFavouriteMovies().observe(this, new Observer<List<Movie>>() {
             @Override
             public void onChanged(List<Movie> movies) {

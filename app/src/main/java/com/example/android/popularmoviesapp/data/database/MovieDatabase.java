@@ -1,4 +1,4 @@
-package com.example.android.popularmoviesapp.database;
+package com.example.android.popularmoviesapp.data.database;
 
 import android.content.Context;
 
@@ -7,7 +7,7 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
 
-import com.example.android.popularmoviesapp.model.Movie;
+import com.example.android.popularmoviesapp.data.models.Movie;
 
 @Database(entities = Movie.class, version = 1)
 public abstract class MovieDatabase extends RoomDatabase {

@@ -1,16 +1,15 @@
-package com.example.android.popularmoviesapp.network;
+package com.example.android.popularmoviesapp.data;
 
 import android.app.Application;
-import android.os.AsyncTask;
 
-import com.example.android.popularmoviesapp.database.MovieDao;
-import com.example.android.popularmoviesapp.database.MovieDatabase;
-import com.example.android.popularmoviesapp.model.Movie;
-import com.example.android.popularmoviesapp.model.MovieResponse;
+import com.example.android.popularmoviesapp.data.database.MovieDao;
+import com.example.android.popularmoviesapp.data.database.MovieDatabase;
+import com.example.android.popularmoviesapp.data.network.MyRetrofit;
+import com.example.android.popularmoviesapp.data.network.RetrofitService;
+import com.example.android.popularmoviesapp.data.models.Movie;
+import com.example.android.popularmoviesapp.data.models.MovieResponse;
 
-import org.jetbrains.annotations.NotNull;
-
-import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import androidx.lifecycle.LiveData;
@@ -18,61 +17,35 @@ import androidx.lifecycle.MutableLiveData;
 
 import io.reactivex.Completable;
 import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
-import io.reactivex.internal.operators.completable.CompletableFromAction;
+import io.reactivex.functions.Function;
 import io.reactivex.observers.DisposableCompletableObserver;
+import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
-import okhttp3.HttpUrl;
-import okhttp3.Interceptor;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 
 public class Repository {
 
-    // Retrofit
-    private final static String BASE_URL = "https://api.themoviedb.org/3/";
-    private RetrofitService retrofitService;
     private static Repository repositoryInstance;
+    private RetrofitService retrofitService; // for Retrofit
+    private MovieDao mMovieDao; // for Room
 
-    // Room
-    private MovieDao mMovieDao;
-//    private LiveData<List<Movie>> mAllFavouriteMovies;
-
-    //RX
     private CompositeDisposable disposable = new CompositeDisposable();
 
 
     private Repository(Application application) {
-        // for Retrofit
-        //TODO: move retrofit instance to a separate class and access it using getInstance() like it's done with MovieDatabase
-        OkHttpClient client = new OkHttpClient.Builder()
-                .addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BASIC))
-                .addInterceptor(new AuthInterceptor())
-                .build();
-
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .client(client)
-                .build();
-
-        retrofitService = retrofit.create(RetrofitService.class);
-
-        // for Room
+        retrofitService = MyRetrofit.getInstance().create(RetrofitService.class);
         mMovieDao = MovieDatabase.getInstance(application).movieDao();
-//        mAllFavouriteMovies = mMovieDao.getAllFavouriteMovies();
     }
+
 
     public synchronized static Repository getInstance(Application application) {
         if (repositoryInstance == null) {
@@ -82,60 +55,107 @@ public class Repository {
     }
 
     // for Retrofit
-    public LiveData<MovieResponse> getMovies(String sortBy, int page) {
+//    public LiveData<MovieResponse> getMovies(String sortBy, int page) {
+//        final MutableLiveData<MovieResponse> data = new MutableLiveData<>();
+//
+//        retrofitService.getAllMovies(sortBy, page).enqueue(new Callback<MovieResponse>() {
+//            @Override
+//            public void onResponse(Call<MovieResponse> call, Response<MovieResponse> response) {
+//                data.setValue(response.body());
+//            }
+//
+//            @Override
+//            public void onFailure(Call<MovieResponse> call, Throwable t) { }
+//        });
+//
+//        return data;
+//    }
+
+    public MutableLiveData<List<Movie>> getMoviesWithRx(String sortBy, int page) {
         final MutableLiveData<MovieResponse> data = new MutableLiveData<>();
 
-        retrofitService.getMovies(sortBy, page).enqueue(new Callback<MovieResponse>() {
-            @Override
-            public void onResponse(Call<MovieResponse> call, Response<MovieResponse> response) {
-                data.setValue(response.body());
-            }
+        ArrayList<Movie> movies = new ArrayList<>();
+        MutableLiveData<List<Movie>> moviesLiveData=new MutableLiveData<>();
 
-            @Override
-            public void onFailure(Call<MovieResponse> call, Throwable t) { }
-        });
+        disposable.add(
+                retrofitService.getAllMoviesWithRx(sortBy, page)
+                        .subscribeOn(Schedulers.io())
+                        .flatMap(new Function<MovieResponse, Observable<Movie>>() {
+                            @Override
+                            public Observable<Movie> apply(@NonNull MovieResponse movieResponse) {
+                                return Observable.fromArray(movieResponse.getMovies().toArray(new Movie[0]));
+                            }
+                        })
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeWith(new DisposableObserver<Movie>() {
+                            @Override
+                            public void onNext(@NonNull Movie movie) {
+                                movies.add(movie);
+                            }
 
-        return data;
+                            @Override
+                            public void onError(@NonNull Throwable e) {
+
+                            }
+
+                            @Override
+                            public void onComplete() {
+                                moviesLiveData.postValue(movies);
+                            }
+                        })
+        );
+
+        return moviesLiveData;
     }
 
-    public LiveData<Movie> getMovieDetails(long id) {
+//    public LiveData<Movie> getMovieDetails(long id) {
+//        final MutableLiveData<Movie> data = new MutableLiveData<>();
+//
+//        retrofitService.getMovieDetails(id).enqueue(new Callback<Movie>() {
+//            @Override
+//            public void onResponse(Call<Movie> call, Response<Movie> response) {
+//                data.setValue(response.body());
+//            }
+//
+//            @Override
+//            public void onFailure(Call<Movie> call, Throwable t) { }
+//        });
+//
+//        return data;
+//    }
+
+    public LiveData<Movie> getMovieDetailsWithRx(long id) {
         final MutableLiveData<Movie> data = new MutableLiveData<>();
 
-        retrofitService.getMovieDetails(id).enqueue(new Callback<Movie>() {
-            @Override
-            public void onResponse(Call<Movie> call, Response<Movie> response) {
-                data.setValue(response.body());
-            }
+        disposable.add(
+                retrofitService.getMovieDetailsWithRx(id)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeWith(new DisposableObserver<Movie>() {
+                            @Override
+                            public void onNext(@NonNull Movie movie) {
+                                data.setValue(movie);
+                            }
 
-            @Override
-            public void onFailure(Call<Movie> call, Throwable t) { }
-        });
+                            @Override
+                            public void onError(@NonNull Throwable e) {
+
+                            }
+
+                            @Override
+                            public void onComplete() {
+
+                            }
+                        })
+        );
 
         return data;
-    }
-
-
-    class AuthInterceptor implements Interceptor {
-
-        @NotNull
-        @Override
-        public okhttp3.Response intercept(@NotNull Chain chain) throws IOException {
-            Request request = chain.request();
-
-            HttpUrl url = request.url().newBuilder()
-                    .addQueryParameter("api_key", "9321c4fc5f95b92bce700096da663cde")
-                    .build();
-
-            request = request.newBuilder().url(url).build();
-
-            return chain.proceed(request);
-        }
     }
 
 
     // for Room
     public LiveData<List<Movie>> getAllFavouriteMovies() {
-//        return mAllFavouriteMovies;
+//        return mMovieDao.getAllFavouriteMovies();
 
         MutableLiveData<List<Movie>> favouriteMoviesLiveData = new MutableLiveData<>();
 

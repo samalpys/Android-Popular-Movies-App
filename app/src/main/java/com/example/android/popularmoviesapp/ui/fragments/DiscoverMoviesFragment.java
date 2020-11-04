@@ -7,13 +7,12 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.android.popularmoviesapp.databinding.FragmentMoviesListBinding;
-import com.example.android.popularmoviesapp.model.MovieResponse;
-import com.example.android.popularmoviesapp.model.Movie;
+import com.example.android.popularmoviesapp.data.models.Movie;
 import com.example.android.popularmoviesapp.R;
 import com.example.android.popularmoviesapp.ui.activites.DetailsActivity;
 import com.example.android.popularmoviesapp.ui.adapters.MovieAdapter;
-import com.example.android.popularmoviesapp.viewmodel.MovieResponseViewModel;
-import com.example.android.popularmoviesapp.viewmodel.MovieResponseViewModel.MovieResponseViewModelFactory;
+import com.example.android.popularmoviesapp.viewmodels.DiscoverMoviesViewModel;
+import com.example.android.popularmoviesapp.viewmodels.DiscoverMoviesViewModel.MovieResponseViewModelFactory;
 
 import java.util.List;
 
@@ -35,6 +34,8 @@ public class DiscoverMoviesFragment extends Fragment implements MovieAdapter.OnM
 
     private String sortBy;
     private MovieAdapter mMovieAdapter;
+
+    private DiscoverMoviesViewModel viewModel;
 
 
     public static DiscoverMoviesFragment newInstance(String sortBy) {
@@ -72,17 +73,25 @@ public class DiscoverMoviesFragment extends Fragment implements MovieAdapter.OnM
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        final MovieResponseViewModel viewModel = ViewModelProviders.of(this, new MovieResponseViewModelFactory(this.getActivity().getApplication(), sortBy)).get(MovieResponseViewModel.class);
+        viewModel = ViewModelProviders.of(this, new MovieResponseViewModelFactory(this.getActivity().getApplication(), sortBy)).get(DiscoverMoviesViewModel.class);
 
         if (sortBy != null) {
-            viewModel.getMovieResponseObservable().observe(this, new Observer<MovieResponse>() {
+//            viewModel.getMovieResponse().observe(this, new Observer<MovieResponse>() {
+//                @Override
+//                public void onChanged(MovieResponse movieResponse) {
+//                    if (movieResponse != null) {
+//                        List<Movie> movies = movieResponse.getMovies();
+//                        if (movies != null && movies.size() != 0) {
+//                            mMovieAdapter.swapData(movies);
+//                        }
+//                    }
+//                }
+//            });
+            viewModel.getMoviesLiveData().observe(this, new Observer<List<Movie>>() {
                 @Override
-                public void onChanged(MovieResponse movieResponse) {
-                    if (movieResponse != null) {
-                        List<Movie> movies = movieResponse.getMovies();
-                        if (movies != null && movies.size() != 0) {
-                            mMovieAdapter.swapData(movies);
-                        }
+                public void onChanged(List<Movie> movies) {
+                    if (movies != null && movies.size() != 0) {
+                        mMovieAdapter.swapData(movies);
                     }
                 }
             });
@@ -104,5 +113,11 @@ public class DiscoverMoviesFragment extends Fragment implements MovieAdapter.OnM
         Intent intent = new Intent(getActivity(), DetailsActivity.class);
         intent.putExtra(INTENT_EXTRA_MOVIE_ID, movieId);
         startActivity(intent);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        viewModel.clearCompositeDisposable();
     }
 }

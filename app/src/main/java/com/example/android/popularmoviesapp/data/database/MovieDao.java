@@ -1,11 +1,10 @@
-package com.example.android.popularmoviesapp.database;
+package com.example.android.popularmoviesapp.data.database;
 
-import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.Query;
 
-import com.example.android.popularmoviesapp.model.Movie;
+import com.example.android.popularmoviesapp.data.models.Movie;
 
 import java.util.List;
 

@@ -7,7 +7,6 @@ import androidx.lifecycle.ViewModelProviders;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.telecom.Call;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -15,9 +14,9 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.example.android.popularmoviesapp.R;
 import com.example.android.popularmoviesapp.databinding.ActivityDetailsBinding;
-import com.example.android.popularmoviesapp.model.Movie;
-import com.example.android.popularmoviesapp.viewmodel.FavouriteMovieViewModel;
-import com.example.android.popularmoviesapp.viewmodel.MovieViewModel;
+import com.example.android.popularmoviesapp.data.models.Movie;
+import com.example.android.popularmoviesapp.viewmodels.FavouriteMoviesViewModel;
+import com.example.android.popularmoviesapp.viewmodels.MovieDetailsViewModel;
 
 
 import static com.example.android.popularmoviesapp.ui.fragments.DiscoverMoviesFragment.INTENT_EXTRA_MOVIE_ID;
@@ -27,6 +26,8 @@ public class DetailsActivity extends AppCompatActivity {
     ActivityDetailsBinding binding;
     private long movieId;
     private Movie movie;
+
+    private MovieDetailsViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,8 +43,9 @@ public class DetailsActivity extends AppCompatActivity {
                 this.onBackPressed();
             }
 
-            final MovieViewModel viewModel = ViewModelProviders.of(this, new MovieViewModel.MovieViewModelFactory(this.getApplication(), movieId)).get(MovieViewModel.class);
-            viewModel.getMovieDetailsObservable().observe(this, new Observer<Movie>() {
+            viewModel = ViewModelProviders.of(this, new MovieDetailsViewModel.MovieViewModelFactory(this.getApplication(), movieId)).get(MovieDetailsViewModel.class);
+//            viewModel.getMovieDetails().observe(this, new Observer<Movie>() {
+            viewModel.getMovieDetailsWithRx().observe(this, new Observer<Movie>() {
                 @Override
                 public void onChanged(Movie movie) {
                     if (movie != null) {
@@ -75,13 +77,12 @@ public class DetailsActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_favorite:
-
-                final MovieViewModel viewModel = ViewModelProviders.of(this, new MovieViewModel.MovieViewModelFactory(this.getApplication(), movieId)).get(MovieViewModel.class);
-                viewModel.getMovieDetailsObservable().observe(this, new Observer<Movie>() {
+//                viewModel.getMovieDetails().observe(this, new Observer<Movie>() {
+                viewModel.getMovieDetailsWithRx().observe(this, new Observer<Movie>() {
                     @Override
                     public void onChanged(Movie movie) {
                         if (movie != null) {
-                            final FavouriteMovieViewModel favouriteViewModel = ViewModelProviders.of(DetailsActivity.this).get(FavouriteMovieViewModel.class);
+                            final FavouriteMoviesViewModel favouriteViewModel = ViewModelProviders.of(DetailsActivity.this).get(FavouriteMoviesViewModel.class);
                             favouriteViewModel.insertFavouriteMovie(movie);
                         }
                     }

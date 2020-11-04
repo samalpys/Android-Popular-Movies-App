@@ -1,8 +1,7 @@
-package com.example.android.popularmoviesapp.model;
+package com.example.android.popularmoviesapp.data.models;
 
 
 import androidx.room.Entity;
-import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 import com.google.gson.annotations.SerializedName;

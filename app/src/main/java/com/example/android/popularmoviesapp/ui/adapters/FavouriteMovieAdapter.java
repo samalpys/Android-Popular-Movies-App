@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.android.popularmoviesapp.R;
-import com.example.android.popularmoviesapp.model.Movie;
+import com.example.android.popularmoviesapp.data.models.Movie;
 
 import java.util.List;
 
