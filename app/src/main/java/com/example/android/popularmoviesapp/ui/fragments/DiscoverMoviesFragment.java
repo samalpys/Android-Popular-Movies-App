@@ -76,17 +76,6 @@ public class DiscoverMoviesFragment extends Fragment implements MovieAdapter.OnM
         viewModel = ViewModelProviders.of(this, new MovieResponseViewModelFactory(this.getActivity().getApplication(), sortBy)).get(DiscoverMoviesViewModel.class);
 
         if (sortBy != null) {
-//            viewModel.getMovieResponse().observe(this, new Observer<MovieResponse>() {
-//                @Override
-//                public void onChanged(MovieResponse movieResponse) {
-//                    if (movieResponse != null) {
-//                        List<Movie> movies = movieResponse.getMovies();
-//                        if (movies != null && movies.size() != 0) {
-//                            mMovieAdapter.swapData(movies);
-//                        }
-//                    }
-//                }
-//            });
             viewModel.getMoviesLiveData().observe(this, new Observer<List<Movie>>() {
                 @Override
                 public void onChanged(List<Movie> movies) {

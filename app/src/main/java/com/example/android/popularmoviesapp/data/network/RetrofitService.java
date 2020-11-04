@@ -11,14 +11,8 @@ import retrofit2.http.Query;
 
 public interface RetrofitService {
 
-//    @GET("discover/movie")
-//    Call<MovieResponse> getAllMovies(@Query("sort_by") String sortBy, @Query("page") int page);
-
     @GET("discover/movie")
     Observable<MovieResponse> getAllMoviesWithRx(@Query("sort_by") String sortBy, @Query("page") int page);
-
-//    @GET("movie/{movie_id}")
-//    Call<Movie> getMovieDetails(@Path("movie_id") long id);
 
     @GET("movie/{movie_id}")
     Observable<Movie> getMovieDetailsWithRx(@Path("movie_id") long id);

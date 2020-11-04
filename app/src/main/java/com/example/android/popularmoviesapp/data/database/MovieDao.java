@@ -19,9 +19,6 @@ public interface MovieDao {
     @Query("DELETE FROM movie_table WHERE id = :movieId")
     void deleteFavouriteMovieById(int movieId);
 
-//    @Query("SELECT * FROM movie_table ORDER BY popularity DESC")
-//    LiveData<List<Movie>> getAllFavouriteMovies();
-
     @Query("SELECT * FROM movie_table")
     Flowable<List<Movie>> getAllFavouriteMoviesRx();
 

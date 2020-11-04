@@ -25,7 +25,6 @@ public class DetailsActivity extends AppCompatActivity {
 
     ActivityDetailsBinding binding;
     private long movieId;
-    private Movie movie;
 
     private MovieDetailsViewModel viewModel;
 
@@ -44,7 +43,6 @@ public class DetailsActivity extends AppCompatActivity {
             }
 
             viewModel = ViewModelProviders.of(this, new MovieDetailsViewModel.MovieViewModelFactory(this.getApplication(), movieId)).get(MovieDetailsViewModel.class);
-//            viewModel.getMovieDetails().observe(this, new Observer<Movie>() {
             viewModel.getMovieDetailsWithRx().observe(this, new Observer<Movie>() {
                 @Override
                 public void onChanged(Movie movie) {
@@ -77,7 +75,6 @@ public class DetailsActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_favorite:
-//                viewModel.getMovieDetails().observe(this, new Observer<Movie>() {
                 viewModel.getMovieDetailsWithRx().observe(this, new Observer<Movie>() {
                     @Override
                     public void onChanged(Movie movie) {

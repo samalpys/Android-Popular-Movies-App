@@ -21,10 +21,6 @@ public class MovieDetailsViewModel extends AndroidViewModel {
         this.movieId = movieId;
     }
 
-//    public LiveData<Movie> getMovieDetails() {
-//        return  repository.getMovieDetails(movieId);
-//    }
-
     public LiveData<Movie> getMovieDetailsWithRx() {
         return  repository.getMovieDetailsWithRx(movieId);
     }

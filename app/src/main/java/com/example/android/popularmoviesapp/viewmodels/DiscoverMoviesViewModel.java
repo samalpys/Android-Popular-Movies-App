@@ -25,10 +25,6 @@ public class DiscoverMoviesViewModel extends AndroidViewModel {
         this.sortBy = sortBy;
     }
 
-//    public LiveData<MovieResponse> getMovieResponse() {
-//        return repository.getMovies(sortBy, 1);
-//    }
-
     public MutableLiveData<List<Movie>> getMoviesLiveData() {
         return repository.getMoviesWithRx(sortBy, 1);
     }
