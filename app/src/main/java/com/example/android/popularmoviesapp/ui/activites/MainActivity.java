@@ -42,15 +42,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void replaceByDiscoverMoviesFragment(String sortBy) {
-        FragmentManager fm = getSupportFragmentManager();
-        fm.beginTransaction()
+        getSupportFragmentManager()
+                .beginTransaction()
                 .replace(R.id.fragment_container, DiscoverMoviesFragment.newInstance(sortBy))
                 .commit();
     }
 
     private void replaceByFavouriteMoviesFragment() {
-        FragmentManager fm = getSupportFragmentManager();
-        fm.beginTransaction()
+        getSupportFragmentManager()
+                .beginTransaction()
                 .replace(R.id.fragment_container, new FavouriteMoviesFragment())
                 .commit();
     }

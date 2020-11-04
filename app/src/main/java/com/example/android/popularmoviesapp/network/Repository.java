@@ -15,6 +15,17 @@ import java.util.List;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+
+import io.reactivex.Completable;
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.functions.Action;
+import io.reactivex.functions.Consumer;
+import io.reactivex.internal.operators.completable.CompletableFromAction;
+import io.reactivex.observers.DisposableCompletableObserver;
+import io.reactivex.schedulers.Schedulers;
 import okhttp3.HttpUrl;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
@@ -36,10 +47,15 @@ public class Repository {
 
     // Room
     private MovieDao mMovieDao;
-    private LiveData<List<Movie>> mAllFavouriteMovies;
+//    private LiveData<List<Movie>> mAllFavouriteMovies;
+
+    //RX
+    private CompositeDisposable disposable = new CompositeDisposable();
+
 
     private Repository(Application application) {
         // for Retrofit
+        //TODO: move retrofit instance to a separate class and access it using getInstance() like it's done with MovieDatabase
         OkHttpClient client = new OkHttpClient.Builder()
                 .addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BASIC))
                 .addInterceptor(new AuthInterceptor())
@@ -54,9 +70,8 @@ public class Repository {
         retrofitService = retrofit.create(RetrofitService.class);
 
         // for Room
-        MovieDatabase db = MovieDatabase.getInstance(application);
-        mMovieDao = db.movieDao();
-        mAllFavouriteMovies = mMovieDao.getAllFavouriteMovies();
+        mMovieDao = MovieDatabase.getInstance(application).movieDao();
+//        mAllFavouriteMovies = mMovieDao.getAllFavouriteMovies();
     }
 
     public synchronized static Repository getInstance(Application application) {
@@ -120,66 +135,153 @@ public class Repository {
 
     // for Room
     public LiveData<List<Movie>> getAllFavouriteMovies() {
-        return mAllFavouriteMovies;
+//        return mAllFavouriteMovies;
+
+        MutableLiveData<List<Movie>> favouriteMoviesLiveData = new MutableLiveData<>();
+
+        disposable.add(
+                mMovieDao.getAllFavouriteMoviesRx()
+                        .subscribeOn(Schedulers.computation())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new Consumer<List<Movie>>() {
+                            @Override
+                            public void accept(List<Movie> movies) {
+                                System.out.println("HERE: " + movies);
+                                favouriteMoviesLiveData.postValue(movies);
+                            }
+                        }, new Consumer<Throwable>() {
+                            @Override
+                            public void accept(Throwable throwable) {
+
+                            }
+                        })
+        );
+
+        return favouriteMoviesLiveData;
+    }
+
+    public void clearCompositeDisposable() {
+        disposable.clear();
     }
 
     public void insertFavouriteMovie(Movie movie) {
-        new InsertFavouriteMovieAsyncTask(mMovieDao).execute(movie);
+//        new InsertFavouriteMovieAsyncTask(mMovieDao).execute(movie);
+
+        disposable.add(
+                Completable.fromAction(new Action() {
+                    @Override
+                    public void run() {
+                        mMovieDao.insertFavouriteMovie(movie);
+                    }
+                })
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeWith(new DisposableCompletableObserver() {
+                            @Override
+                            public void onComplete() { }
+
+                            @Override
+                            public void onError(@NonNull Throwable e) { }
+                        })
+        );
     }
 
-    private static class InsertFavouriteMovieAsyncTask extends AsyncTask<Movie, Void, Void> {
-
-        private MovieDao movieDao; // we need this to make db operations
-
-        public InsertFavouriteMovieAsyncTask(MovieDao movieDao) {
-            this.movieDao = movieDao;
-        }
-
-        @Override
-        protected Void doInBackground(Movie... movies) {
-            Movie movieToInsert = movies[0];
-            movieDao.insertFavouriteMovie(movieToInsert);
-            return null;
-        }
-    }
+//    private static class InsertFavouriteMovieAsyncTask extends AsyncTask<Movie, Void, Void> {
+//
+//        private MovieDao movieDao; // we need this to make db operations
+//
+//        public InsertFavouriteMovieAsyncTask(MovieDao movieDao) {
+//            this.movieDao = movieDao;
+//        }
+//
+//        @Override
+//        protected Void doInBackground(Movie... movies) {
+//            Movie movieToInsert = movies[0];
+//            movieDao.insertFavouriteMovie(movieToInsert);
+//            return null;
+//        }
+//    }
 
     public void deleteFavouriteMovieById(int id) {
-        new DeleteFavouriteMovieByIdAsyncTask(mMovieDao).execute(id);
+//        new DeleteFavouriteMovieByIdAsyncTask(mMovieDao).execute(id);
+        disposable.add(
+                Completable.fromAction(new Action() {
+                    @Override
+                    public void run() {
+                        mMovieDao.deleteFavouriteMovieById(id);
+                    }
+                })
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeWith(new DisposableCompletableObserver() {
+                            @Override
+                            public void onComplete() {
+
+                            }
+
+                            @Override
+                            public void onError(@NonNull Throwable e) {
+
+                            }
+                        })
+        );
+
     }
 
-    private static class DeleteFavouriteMovieByIdAsyncTask extends AsyncTask<Integer, Void, Void> {
-
-        private MovieDao movieDao; // we need this to make db operations
-
-        public DeleteFavouriteMovieByIdAsyncTask(MovieDao movieDao) {
-            this.movieDao = movieDao;
-        }
-
-        @Override
-        protected Void doInBackground(Integer... integers) {
-            Integer idToDelete = integers[0];
-            movieDao.deleteFavouriteMovieById(idToDelete);
-            return null;
-        }
-    }
+//    private static class DeleteFavouriteMovieByIdAsyncTask extends AsyncTask<Integer, Void, Void> {
+//
+//        private MovieDao movieDao; // we need this to make db operations
+//
+//        public DeleteFavouriteMovieByIdAsyncTask(MovieDao movieDao) {
+//            this.movieDao = movieDao;
+//        }
+//
+//        @Override
+//        protected Void doInBackground(Integer... integers) {
+//            Integer idToDelete = integers[0];
+//            movieDao.deleteFavouriteMovieById(idToDelete);
+//            return null;
+//        }
+//    }
 
     public void deleteAllFavouriteMovies() {
-        new DeleteAllFavouriteMoviesAsyncTask(mMovieDao).execute();
+//        new DeleteAllFavouriteMoviesAsyncTask(mMovieDao).execute();
+        disposable.add(
+                Completable.fromAction(new Action() {
+                    @Override
+                    public void run() throws Exception {
+                        mMovieDao.deleteAllFavouriteMovies();
+                    }
+                })
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeWith(new DisposableCompletableObserver() {
+                            @Override
+                            public void onComplete() {
+
+                            }
+
+                            @Override
+                            public void onError(@NonNull Throwable e) {
+
+                            }
+                        })
+        );
     }
 
-    private static class DeleteAllFavouriteMoviesAsyncTask extends AsyncTask<Void, Void, Void> {
-
-        private MovieDao movieDao; // we need this to make db operations
-
-        public DeleteAllFavouriteMoviesAsyncTask(MovieDao movieDao) {
-            this.movieDao = movieDao;
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            movieDao.deleteAllFavouriteMovies();
-            return null;
-        }
-    }
+//    private static class DeleteAllFavouriteMoviesAsyncTask extends AsyncTask<Void, Void, Void> {
+//
+//        private MovieDao movieDao; // we need this to make db operations
+//
+//        public DeleteAllFavouriteMoviesAsyncTask(MovieDao movieDao) {
+//            this.movieDao = movieDao;
+//        }
+//
+//        @Override
+//        protected Void doInBackground(Void... voids) {
+//            movieDao.deleteAllFavouriteMovies();
+//            return null;
+//        }
+//    }
 
 }

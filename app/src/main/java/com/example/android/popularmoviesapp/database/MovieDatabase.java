@@ -18,8 +18,7 @@ public abstract class MovieDatabase extends RoomDatabase {
 
     public static synchronized MovieDatabase getInstance(Context context) {
         if (sInstance == null) {
-            sInstance = Room.databaseBuilder(context.getApplicationContext(),
-                    MovieDatabase.class, "movie_database")
+            sInstance = Room.databaseBuilder(context.getApplicationContext(), MovieDatabase.class, "movie_database")
                     .fallbackToDestructiveMigration()
                     .build();
         }

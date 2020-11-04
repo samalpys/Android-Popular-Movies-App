@@ -12,18 +12,15 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
 public class FavouriteMovieViewModel extends AndroidViewModel {
-
     private Repository repository;
-    private LiveData<List<Movie>> allFavouriteMovies;
 
     public FavouriteMovieViewModel(@NonNull Application application) {
         super(application);
         repository = Repository.getInstance(application);
-        allFavouriteMovies = repository.getAllFavouriteMovies();
     }
 
     public LiveData<List<Movie>> getAllFavouriteMovies() {
-        return allFavouriteMovies;
+        return repository.getAllFavouriteMovies();
     }
 
     public void insertFavouriteMovie(Movie movie) {
@@ -36,5 +33,9 @@ public class FavouriteMovieViewModel extends AndroidViewModel {
 
     public void deleteAllFavouriteMovies() {
         repository.deleteAllFavouriteMovies();
+    }
+
+    public void clearCompositeDisposable() {
+        repository.clearCompositeDisposable();
     }
 }

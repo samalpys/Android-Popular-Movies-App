@@ -29,8 +29,11 @@ public class FavouriteMoviesFragment extends Fragment implements MovieAdapter.On
     private static final int NUMBER_OF_COLUMNS = 3;
     public static final String INTENT_EXTRA_MOVIE_ID = "MOVIE_ID";
 
-    FragmentMoviesListBinding binding;
+    private FragmentMoviesListBinding binding;
     private MovieAdapter mFavourtieMovieAdapter;
+
+    private FavouriteMovieViewModel viewModel;
+
 
     @Nullable
     @Override
@@ -52,7 +55,7 @@ public class FavouriteMoviesFragment extends Fragment implements MovieAdapter.On
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         // this way ViewModel will be destroyed when Fragment is finished
-        final FavouriteMovieViewModel viewModel = ViewModelProviders.of(this).get(FavouriteMovieViewModel.class);
+        viewModel = ViewModelProviders.of(this).get(FavouriteMovieViewModel.class);
         viewModel.getAllFavouriteMovies().observe(this, new Observer<List<Movie>>() {
             @Override
             public void onChanged(List<Movie> movies) {
@@ -69,5 +72,11 @@ public class FavouriteMoviesFragment extends Fragment implements MovieAdapter.On
         Intent intent = new Intent(getActivity(), DetailsActivity.class);
         intent.putExtra(INTENT_EXTRA_MOVIE_ID, movieId);
         startActivity(intent);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        viewModel.clearCompositeDisposable();
     }
 }

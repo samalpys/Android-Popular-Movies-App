@@ -9,6 +9,8 @@ import com.example.android.popularmoviesapp.model.Movie;
 
 import java.util.List;
 
+import io.reactivex.Flowable;
+
 @Dao
 public interface MovieDao {
 
@@ -18,9 +20,15 @@ public interface MovieDao {
     @Query("DELETE FROM movie_table WHERE id = :movieId")
     void deleteFavouriteMovieById(int movieId);
 
-    @Query("SELECT * FROM movie_table ORDER BY popularity DESC")
-    LiveData<List<Movie>> getAllFavouriteMovies();
+//    @Query("SELECT * FROM movie_table ORDER BY popularity DESC")
+//    LiveData<List<Movie>> getAllFavouriteMovies();
+
+    @Query("SELECT * FROM movie_table")
+    Flowable<List<Movie>> getAllFavouriteMoviesRx();
 
     @Query("DELETE FROM movie_table")
     void deleteAllFavouriteMovies();
+
+    @Query("SELECT * FROM movie_table WHERE id ==:id")
+    Movie getFavouriteMovie(long id);
 }
