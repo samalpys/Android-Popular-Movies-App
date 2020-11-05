@@ -9,10 +9,6 @@ import com.google.gson.annotations.SerializedName;
 @Entity(tableName = "movie_table")
 public class Movie {
 
-    private static final String IMAGE_BASE_URL = "https://image.tmdb.org/t/p/";
-    public static final String POSTER_SIZE = "w342";
-    public static final String BACKDROP_SIZE = "w780";
-
 //    @PrimaryKey(autoGenerate = true)
 //    private int databaseId;
 
@@ -82,7 +78,7 @@ public class Movie {
     }
 
     public String getPosterPath() {
-        return IMAGE_BASE_URL + POSTER_SIZE + "/" + posterPath;
+        return posterPath;
     }
 
     public Integer getId() {
@@ -94,7 +90,7 @@ public class Movie {
     }
 
     public String getBackdropPath() {
-        return IMAGE_BASE_URL + BACKDROP_SIZE + "/" + backdropPath;
+        return backdropPath;
     }
 
     public String getOriginalLanguage() {

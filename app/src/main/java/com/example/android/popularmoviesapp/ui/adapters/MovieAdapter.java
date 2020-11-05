@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.example.android.popularmoviesapp.R;
 import com.example.android.popularmoviesapp.data.models.Movie;
+import com.example.android.popularmoviesapp.utils.Constants;
 
 import java.util.List;
 
@@ -49,7 +50,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
     public void onBindViewHolder(@NonNull MovieViewHolder holder, int position) {
         Movie movie = movies.get(position);
 
-        Glide.with(context).load(movie.getPosterPath()).into(holder.mPoster);
+        Glide.with(context).load(Constants.IMAGE_URL + movie.getPosterPath()).into(holder.mPoster);
         holder.mOriginalTitle.setText(movie.getOriginalTitle());
         holder.mVoteAverage.setText(String.valueOf(movie.getVoteAverage()));
     }

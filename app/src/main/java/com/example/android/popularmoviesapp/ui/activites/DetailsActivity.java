@@ -15,6 +15,7 @@ import com.bumptech.glide.Glide;
 import com.example.android.popularmoviesapp.R;
 import com.example.android.popularmoviesapp.databinding.ActivityDetailsBinding;
 import com.example.android.popularmoviesapp.data.models.Movie;
+import com.example.android.popularmoviesapp.utils.Constants;
 import com.example.android.popularmoviesapp.viewmodels.FavouriteMoviesViewModel;
 import com.example.android.popularmoviesapp.viewmodels.MovieDetailsViewModel;
 
@@ -52,8 +53,8 @@ public class DetailsActivity extends AppCompatActivity {
                             getSupportActionBar().setTitle(movie.getTitle());
                         }
 
-                        Glide.with(DetailsActivity.this).load(movie.getBackdropPath()).into(binding.ivHeaderPoster);
-                        Glide.with(DetailsActivity.this).load(movie.getPosterPath()).into(binding.extraDetails.ivPoster);
+                        Glide.with(DetailsActivity.this).load(Constants.BACKDROP_URL + movie.getBackdropPath()).into(binding.ivHeaderPoster);
+                        Glide.with(DetailsActivity.this).load(Constants.IMAGE_URL + movie.getPosterPath()).into(binding.extraDetails.ivPoster);
                         binding.extraDetails.tvOriginalTitle.setText(movie.getTitle());
                         binding.extraDetails.tvReleaseDate.setText(movie.getReleaseDate());
                         binding.extraDetails.tvVoteAverage.setText(movie.getVoteAverage() + "/10");
