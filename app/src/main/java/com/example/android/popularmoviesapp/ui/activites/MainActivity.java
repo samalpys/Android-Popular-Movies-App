@@ -6,6 +6,7 @@ import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.FragmentManager;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -15,8 +16,14 @@ import com.example.android.popularmoviesapp.databinding.ActivityMainBinding;
 import com.example.android.popularmoviesapp.ui.fragments.DiscoverMoviesFragment;
 import com.example.android.popularmoviesapp.ui.fragments.FavouriteMoviesFragment;
 
+import javax.inject.Inject;
 
-public class MainActivity extends AppCompatActivity {
+import dagger.android.support.DaggerAppCompatActivity;
+
+
+public class MainActivity extends DaggerAppCompatActivity {
+
+    @Inject String someString;
 
     ActivityMainBinding binding;
 
@@ -39,6 +46,8 @@ public class MainActivity extends AppCompatActivity {
                     return false;
             }
         });
+
+        Log.d("HERE", "someString = " +someString);
     }
 
     private void replaceByDiscoverMoviesFragment(String sortBy) {

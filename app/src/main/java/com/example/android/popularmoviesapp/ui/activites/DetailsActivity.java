@@ -20,9 +20,11 @@ import com.example.android.popularmoviesapp.viewmodels.FavouriteMoviesViewModel;
 import com.example.android.popularmoviesapp.viewmodels.MovieDetailsViewModel;
 
 
+import dagger.android.support.DaggerAppCompatActivity;
+
 import static com.example.android.popularmoviesapp.ui.fragments.DiscoverMoviesFragment.INTENT_EXTRA_MOVIE_ID;
 
-public class DetailsActivity extends AppCompatActivity {
+public class DetailsActivity extends DaggerAppCompatActivity {
 
     ActivityDetailsBinding binding;
     private long movieId;
