@@ -6,23 +6,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.android.popularmoviesapp.data.Repository;
 import com.example.android.popularmoviesapp.databinding.FragmentMoviesListBinding;
-import com.example.android.popularmoviesapp.data.models.Movie;
 import com.example.android.popularmoviesapp.R;
 import com.example.android.popularmoviesapp.ui.activites.DetailsActivity;
 import com.example.android.popularmoviesapp.ui.adapters.MovieAdapter;
-import com.example.android.popularmoviesapp.viewmodels.DiscoverMoviesViewModel;
-import com.example.android.popularmoviesapp.viewmodels.DiscoverMoviesViewModel.MovieResponseViewModelFactory;
-
-import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
 
 
 public class DiscoverMoviesFragment extends Fragment implements MovieAdapter.OnMovieClickListener {
@@ -35,7 +31,7 @@ public class DiscoverMoviesFragment extends Fragment implements MovieAdapter.OnM
     private String sortBy;
     private MovieAdapter mMovieAdapter;
 
-    private DiscoverMoviesViewModel viewModel;
+    private CompositeDisposable disposable = new CompositeDisposable();
 
 
     public static DiscoverMoviesFragment newInstance(String sortBy) {
@@ -73,18 +69,13 @@ public class DiscoverMoviesFragment extends Fragment implements MovieAdapter.OnM
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        viewModel = ViewModelProviders.of(this, new MovieResponseViewModelFactory(this.getActivity().getApplication(), sortBy)).get(DiscoverMoviesViewModel.class);
+        Repository repository = Repository.getInstance(getActivity().getApplication());
 
-        if (sortBy != null) {
-            viewModel.getMoviesLiveData().observe(this, new Observer<List<Movie>>() {
-                @Override
-                public void onChanged(List<Movie> movies) {
-                    if (movies != null && movies.size() != 0) {
-                        mMovieAdapter.swapData(movies);
-                    }
-                }
-            });
-        }
+        disposable.add(
+            repository.observeMovies(sortBy, 1)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(movies -> mMovieAdapter.swapData(movies))
+        );
     }
 
     @Override
@@ -107,6 +98,6 @@ public class DiscoverMoviesFragment extends Fragment implements MovieAdapter.OnM
     @Override
     public void onDestroy() {
         super.onDestroy();
-        viewModel.clearCompositeDisposable();
+        disposable.clear();
     }
 }

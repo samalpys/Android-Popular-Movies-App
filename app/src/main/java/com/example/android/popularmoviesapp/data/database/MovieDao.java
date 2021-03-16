@@ -20,11 +20,11 @@ public interface MovieDao {
     void deleteFavouriteMovieById(int movieId);
 
     @Query("SELECT * FROM movie_table")
-    Flowable<List<Movie>> getAllFavouriteMoviesRx();
+    Flowable<List<Movie>> observeFavouriteMovies();
 
     @Query("DELETE FROM movie_table")
     void deleteAllFavouriteMovies();
 
     @Query("SELECT * FROM movie_table WHERE id ==:id")
-    Movie getFavouriteMovie(long id);
+    Movie getFavouriteMovieById(long id);
 }

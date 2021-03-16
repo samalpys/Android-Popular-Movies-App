@@ -7,21 +7,19 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.android.popularmoviesapp.R;
+import com.example.android.popularmoviesapp.data.Repository;
 import com.example.android.popularmoviesapp.databinding.FragmentMoviesListBinding;
-import com.example.android.popularmoviesapp.data.models.Movie;
 import com.example.android.popularmoviesapp.ui.activites.DetailsActivity;
 import com.example.android.popularmoviesapp.ui.adapters.MovieAdapter;
-import com.example.android.popularmoviesapp.viewmodels.FavouriteMoviesViewModel;
 
-import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
 
 
 public class FavouriteMoviesFragment extends Fragment implements MovieAdapter.OnMovieClickListener {
@@ -32,7 +30,7 @@ public class FavouriteMoviesFragment extends Fragment implements MovieAdapter.On
     private FragmentMoviesListBinding binding;
     private MovieAdapter mFavourtieMovieAdapter;
 
-    private FavouriteMoviesViewModel viewModel;
+    private CompositeDisposable disposable = new CompositeDisposable();
 
 
     @Nullable
@@ -54,16 +52,18 @@ public class FavouriteMoviesFragment extends Fragment implements MovieAdapter.On
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        // this way ViewModel will be destroyed when Fragment is finished
-        viewModel = ViewModelProviders.of(this).get(FavouriteMoviesViewModel.class);
-        viewModel.getAllFavouriteMovies().observe(this, new Observer<List<Movie>>() {
-            @Override
-            public void onChanged(List<Movie> movies) {
-                if (movies != null && movies.size() != 0) {
-                    mFavourtieMovieAdapter.swapData(movies);
-                }
-            }
-        });
+
+        Repository repository = Repository.getInstance(getActivity().getApplication());
+        disposable.add(
+            repository.observeFavouriteMovies()
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(movies -> {
+                        System.out.println("HERE: movies="+movies);
+                        if (movies != null && movies.size() != 0) {
+                            mFavourtieMovieAdapter.swapData(movies);
+                        }
+                    })
+        );
     }
 
     // for MovieAdapter.OnMovieClickListener
@@ -77,6 +77,6 @@ public class FavouriteMoviesFragment extends Fragment implements MovieAdapter.On
     @Override
     public void onDestroy() {
         super.onDestroy();
-        viewModel.clearCompositeDisposable();
+        disposable.clear();
     }
 }
